@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Member;
 use App\Http\Requests\StoreMemberRequest;
 use App\Http\Requests\UpdateMemberRequest;
+use Illuminate\Http\Request;
 
 class MemberController extends Controller
 {
@@ -13,7 +14,7 @@ class MemberController extends Controller
      */
     public function index()
     {
-        //
+        return view('home');
     }
 
     /**
@@ -21,15 +22,27 @@ class MemberController extends Controller
      */
     public function create()
     {
-        //
+        
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreMemberRequest $request)
+    public function store(Request $request)
     {
-        //
+        $request->validate([
+            'nama_pelanggan' => 'required|string',
+            'alamat' => 'required|string',
+            'no_hp' => 'required|string',
+        ]);
+
+        $member = Member::create([
+            'nama_pelanggan' => $request->nama_pelanggan,
+            'alamat' => $request->alamat,
+            'no_hp' => $request->no_hp,
+        ]);
+
+        return redirect()->route('member.create', compact('member'))->with('success', 'Member berhasil ditambahkan');
     }
 
     /**
@@ -43,9 +56,23 @@ class MemberController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Member $member)
+    public function edit(Request $request)
     {
-        //
+        $request->validate([
+            'nama_pelanggan' => 'required|string',
+            'alamat' => 'required|string',
+            'no_hp' => 'required|string',
+        ]);
+
+        $member = Member::find($request->id);
+        
+        $member->update([
+            'nama_pelanggan' => $request->nama_pelanggan,
+            'alamat' => $request->alamat,
+            'no_hp' => $request->no_hp,
+        ]);
+
+        return redirect()->route('member.index')->with('success', 'Member berhasil diubah');
     }
 
     /**
@@ -59,8 +86,10 @@ class MemberController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Member $member)
+    public function destroy($id)
     {
-        //
+        $member = Member::findOrFail($id);
+        $member->delete();
+        return redirect()->route('member.index')->with('success', 'Member berhasil dihapus');
     }
 }

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Pemasok;
 use App\Http\Requests\StorePemasokRequest;
 use App\Http\Requests\UpdatePemasokRequest;
+use Illuminate\Http\Request;
 
 class PemasokController extends Controller
 {
@@ -13,7 +14,7 @@ class PemasokController extends Controller
      */
     public function index()
     {
-        //
+        return view('home');
     }
 
     /**
@@ -27,9 +28,24 @@ class PemasokController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StorePemasokRequest $request)
+    public function store(Request $request)
     {
-        //
+        $request->validate([
+            'nama_pemasok' => 'required|string',
+            'alamat' => 'required|string',
+            'no_hp' => 'required|string',
+            'email' => 'required|email',
+        ]);
+
+        $pemasok = Pemasok::create([
+            'nama_pemasok' => $request->nama_pemasok,
+            'alamat' => $request->alamat,
+            'no_hp' => $request->no_hp,
+            'email' => $request->email,
+        ]);
+
+        return redirect()->route('pemasok.create', compact('pemasok'))->with('success', 'Pemasok berhasil ditambahkan');
+
     }
 
     /**
@@ -43,9 +59,23 @@ class PemasokController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Pemasok $pemasok)
+    public function edit(Request $request, $id)
     {
-        //
+        $request->validate([
+            'nama_pemasok' => 'required|string',
+            'alamat' => 'required|string',
+            'no_hp' => 'required|string',
+            'email' => 'required|email',
+        ]);
+
+        $pemasok = Pemasok::findOrFail($id);
+        $pemasok->update([
+            'nama_pemasok' => $request->nama_pemasok,
+            'alamat' => $request->alamat,
+            'no_hp' => $request->no_hp,
+            'email' => $request->email,
+        ]);
+        return redirect()->route('pemasok.index')->with('success', 'Pemasok berhasil diubah');
     }
 
     /**
@@ -59,8 +89,10 @@ class PemasokController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Pemasok $pemasok)
+    public function destroy($id)
     {
-        //
+        $pemasok = Pemasok::findOrFail($id);
+        $pemasok->delete();
+        return redirect()->route('pemasok.index')->with('success', 'Pemasok berhasil dihapus');
     }
 }

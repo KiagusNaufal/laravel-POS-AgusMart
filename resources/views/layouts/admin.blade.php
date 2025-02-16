@@ -47,52 +47,8 @@
                 <span>{{ __('Dashboard') }}</span></a>
         </li>
 
-        <li class="nav-item">
-            <a class="nav-link" href="">
-                <i class="fas fa-fw fa-tachometer-alt"></i>
-                <span>{{ __('Barang Inventaris') }}</span></a>
-        </li>
-
-        <li class="nav-item">
-            <a class="nav-link" href="">
-                <i class="fas fa-fw fa-tachometer-alt"></i>
-                <span>{{ __('Pinjaman') }}</span></a>
-        </li>
-
-        <li class="nav-item">
-            <a class="nav-link" href="">
-                <i class="fas fa-fw fa-tachometer-alt"></i>
-                <span>{{ __('Pengembalian') }}</span></a>
-        </li>
-
-        <li class="nav-item">
-            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseLaporan" aria-expanded="true" aria-controls="collapseLaporan">
-            <i class="fas fa-fw fa-tachometer-alt"></i>
-            <span>{{ __('Laporan') }}</span>
-            </a>
-            <div id="collapseLaporan" class="collapse" aria-labelledby="headingLaporan" data-parent="#accordionSidebar">
-            <div class="bg-white py-2 collapse-inner rounded">
-                <h6 class="collapse-header">{{ __('Laporan') }}</h6>
-                <a class="collapse-item" href="">{{ __('Laporan Barang Inventaris') }}</a>
-                <a class="collapse-item" href="">{{ __('Laporan Peminjaman') }}</a>
-                <a class="collapse-item" href="">{{ __('Laporan Pengembalian') }}</a>
-            </div>
-            </div>
-        </li>
-
-        <li class="nav-item">
-            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseReferensi" aria-expanded="true" aria-controls="collapseReferensi">
-            <i class="fas fa-fw fa-tachometer-alt"></i>
-            <span>{{ __('Referensi') }}</span>
-            </a>
-            <div id="collapseReferensi" class="collapse" aria-labelledby="headingReferensi" data-parent="#accordionSidebar">
-            <div class="bg-white py-2 collapse-inner rounded">
-                <h6 class="collapse-header">{{ __('Referensi') }}</h6>
-                <a class="collapse-item" href="">{{ __('Jenis Barang') }}</a>
-                <a class="collapse-item" href="">{{ __('Vendor') }}</a>
-            </div>
-            </div>
-        </li>
+      
+      
         <!-- Divider -->
         <hr class="sidebar-divider">
 

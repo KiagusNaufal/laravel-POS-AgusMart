@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Barang;
 use App\Http\Requests\StoreBarangRequest;
 use App\Http\Requests\UpdateBarangRequest;
+use Illuminate\Http\Request;
 
 class BarangController extends Controller
 {
@@ -27,9 +28,22 @@ class BarangController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreBarangRequest $request)
+    public function store(Request $request)
     {
-        //
+        $request->validate([
+            'nama_barang' => 'required|string',
+            'harga' => 'required|integer',
+            'stok' => 'required|integer',
+            'id_kategori' => 'required|integer',
+        ]);
+
+        $barang = Barang::create([
+            'nama_barang' => $request->nama_barang,
+            'harga' => $request->harga,
+            'stok' => $request->stok,
+            'id_kategori' => $request->id_kategori,
+        ]);
+        return redirect()->route('home', compact('barang'))->with('success', 'Data berhasil ditambahkan');
     }
 
     /**
@@ -43,9 +57,24 @@ class BarangController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Barang $barang)
+    public function edit(Request $request, $id)
     {
-        //
+        $request->validate([
+            'nama_barang' => 'required|string',
+            'harga' => 'required|integer',
+            'stok' => 'required|integer',
+            'id_kategori' => 'required|integer',
+        ]);
+
+        $barang = Barang::findOrFail($id);
+        $barang->update([
+            'nama_barang' => $request->nama_barang,
+            'harga' => $request->harga,
+            'stok' => $request->stok,
+            'id_kategori' => $request->id_kategori,
+        ]);
+        return redirect()->route('home', compact('barang'))->with('success', 'Data berhasil diubah');
+        
     }
 
     /**
@@ -59,8 +88,10 @@ class BarangController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Barang $barang)
+    public function destroy($id)
     {
-        //
+        $barang = Barang::findOrFail($id);
+        $barang->delete();
+        return redirect()->route('home')->with('success', 'Data berhasil dihapus');
     }
 }
