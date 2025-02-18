@@ -20,6 +20,26 @@ class Barang extends Model
         'stok',
         'ditarik',
     ];
+
+    public function kategori()
+    {
+        return $this->belongsTo(Kategori::class, 'id_kategori', 'id');
+    }
+
+
+    public function detailPembelian()
+    {
+        return $this->hasMany(DetailPembelian::class, 'id_barang', 'id');
+    }
+
+    public function detailPenjualan()
+    {
+        return $this->hasMany(DetailPenjualan::class, 'id_barang', 'id');
+    }
+
+    
+
+
     
 
 }

@@ -47,12 +47,7 @@
                 <span>{{ __('Dashboard') }}</span></a>
         </li>
 
-        <li class="nav-item">
-            <a class="nav-link" href="{{ route('kategori') }}">
-                <i class="fas fa-fw fa-tachometer-alt"></i>
-                <span>{{ __('Kategori') }}</span></a>
 
-        </li>
       
         <!-- Divider -->
         <hr class="sidebar-divider">
@@ -249,7 +244,7 @@
             <!-- Begin Page Content -->
             <div class="container-fluid">
 
-                @yield('main-content')
+                @yield('main-content1')
 
             </div>
             <!-- /.container-fluid -->

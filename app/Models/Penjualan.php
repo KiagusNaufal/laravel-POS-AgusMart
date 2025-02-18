@@ -19,4 +19,18 @@ class Penjualan extends Model
         'id_member',
         'user_id'
     ];
+
+    public function member()
+    {
+        return $this->belongsTo(Member::class, 'id_member
+        ', 'id');
+        }
+        public function user()
+        {
+            return $this->belongsTo(User::class, 'user_id', 'id');
+        }
+        public function detail_penjualan()
+        {
+            return $this->hasMany(DetailPenjualan::class, 'id_penjualan', 'id');
+        }
 }

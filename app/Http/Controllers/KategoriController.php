@@ -16,7 +16,8 @@ class KategoriController extends Controller
      */
     public function index()
     {
-        //
+        $kategori = Kategori::all();
+        return view('admin.kategori.index', compact('kategori'));
     }
 
     /**
@@ -31,9 +32,9 @@ class KategoriController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreKategoriRequest $request)
+    public function store(Request $request)
     {
-        $request->validated([
+        $request->validate([
             'nama_kategori' => 'required|string',
         ]);
 
@@ -41,7 +42,7 @@ class KategoriController extends Controller
         $kategori->nama_kategori = $request->nama_kategori;
         $kategori->save();
 
-        return redirect()->route('kategori.create')->with('success', 'Kategori berhasil ditambahkan');
+        return redirect()->route('kategori')->with('success', 'Kategori berhasil ditambahkan');
     }
 
     /**
@@ -64,7 +65,7 @@ class KategoriController extends Controller
         $kategori = Kategori::findOrFail($id);
         $kategori->nama_kategori = $request->nama_kategori;
         $kategori->save();
-         return redirect()->route('kategori.index')->with('success', 'Kategori berhasil diubah');
+         return redirect()->route('kategori')->with('success', 'Kategori berhasil diubah');
     }
 
     /**

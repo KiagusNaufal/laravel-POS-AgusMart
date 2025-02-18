@@ -16,4 +16,16 @@ class Member extends Model
         'no_telp',
         'alamat',
     ];
+
+    public function penjualan()
+    {
+        return $this->hasMany(Penjualan::class, 'id_member', 'id');
+    }
+
+    public function poin()
+    {
+        return $this->hasMany(Poin::class, 'id_member
+        ', 'id');
+    }
+
 }

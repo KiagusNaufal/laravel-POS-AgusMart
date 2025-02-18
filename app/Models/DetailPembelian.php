@@ -18,4 +18,14 @@ class DetailPembelian extends Model
         'jumlah',
         'sub_total',
     ];
+
+    public function barang()
+    {
+        return $this->belongsTo(Barang::class, 'id_barang
+        ', 'id');
+        }
+        public function pembelian()
+        {
+            return $this->belongsTo(Pembelian::class, 'id_pembelian', 'id');
+        }
 }

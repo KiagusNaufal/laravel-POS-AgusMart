@@ -16,4 +16,16 @@ class Poin extends Model
         'poin_didapat',
         'total_poin',
     ];
+
+    public function member()
+    {
+        return $this->belongsTo(Member::class, 'id_member
+        ', 'id');
+        }
+        public function penjualan()
+        {
+            return $this->belongsTo(Penjualan::class, 'id_penjualan', 'id');
+        }
+
+        
 }

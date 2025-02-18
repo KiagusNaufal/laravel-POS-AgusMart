@@ -16,4 +16,9 @@ class Pemasok extends Model
         'alamat',
         'email',
     ];
+
+    public function barang()
+    {
+        return $this->hasMany(Barang::class, 'id_pemasok', 'id');
+    }
 }

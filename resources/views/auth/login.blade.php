@@ -26,7 +26,7 @@
                                 <form method="POST" action="{{ route('login') }}" class="user">
                                     @csrf
                                     <div class="form-group">
-                                        <input type="name" class="form-control form-control-user" name="name" placeholder="{{ __('name') }}" value="{{ old('name') }}" required autofocus>
+                                        <input type="email" class="form-control form-control-user" name="email" placeholder="{{ __('Email') }}" value="{{ old('email') }}" required autofocus>
                                     </div>
 
                                     <div class="form-group">
