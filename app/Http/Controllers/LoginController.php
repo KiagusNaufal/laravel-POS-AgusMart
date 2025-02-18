@@ -20,8 +20,18 @@ class LoginController extends Controller
         ]);
 
         if (Auth::attempt($request->only('email', 'password'))) {
-            return redirect()->route('home')->with('success', 'Login berhasil');
+            $user = Auth::user();
+            if ($user->role == 'admin') {
+                return redirect()->route('admin')->with('success', 'Selamat datang, Admin');
+            } elseif ($user->role == 'kasir') {
+                return redirect()->route('kasir')->with('success', 'Selamat datang, Kasir');
+            } elseif ($user->role == 'super') {
+                return redirect()->route('super')->with('success', 'Selamat datang, Super Admin');
+            } else {
+                return redirect('/home');
+            }
         }
+        
 
         return back()->with('error', 'Email atau password salah');
     }
