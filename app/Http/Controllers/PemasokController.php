@@ -14,7 +14,8 @@ class PemasokController extends Controller
      */
     public function index()
     {
-        return view('home');
+        $pemasok = Pemasok::all();
+        return view('admin.pemasok.index', compact('pemasok'));
     }
 
     /**
@@ -33,18 +34,18 @@ class PemasokController extends Controller
         $request->validate([
             'nama_pemasok' => 'required|string',
             'alamat' => 'required|string',
-            'no_hp' => 'required|string',
+            'no_telp' => 'required|string',
             'email' => 'required|email',
         ]);
 
         $pemasok = Pemasok::create([
             'nama_pemasok' => $request->nama_pemasok,
             'alamat' => $request->alamat,
-            'no_hp' => $request->no_hp,
+            'no_telp' => $request->no_telp,
             'email' => $request->email,
         ]);
 
-        return redirect()->route('pemasok.create', compact('pemasok'))->with('success', 'Pemasok berhasil ditambahkan');
+        return redirect()->route('admin.pemasok', compact('pemasok'))->with('success', 'Pemasok berhasil ditambahkan');
 
     }
 
@@ -64,7 +65,7 @@ class PemasokController extends Controller
         $request->validate([
             'nama_pemasok' => 'required|string',
             'alamat' => 'required|string',
-            'no_hp' => 'required|string',
+            'no_telp' => 'required|string',
             'email' => 'required|email',
         ]);
 
@@ -72,10 +73,10 @@ class PemasokController extends Controller
         $pemasok->update([
             'nama_pemasok' => $request->nama_pemasok,
             'alamat' => $request->alamat,
-            'no_hp' => $request->no_hp,
+            'no_telp' => $request->no_telp,
             'email' => $request->email,
         ]);
-        return redirect()->route('pemasok.index')->with('success', 'Pemasok berhasil diubah');
+        return redirect()->route('admin.pemasok')->with('success', 'Pemasok berhasil diubah');
     }
 
     /**

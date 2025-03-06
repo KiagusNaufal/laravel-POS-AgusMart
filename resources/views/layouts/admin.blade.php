@@ -42,7 +42,7 @@
 
         <!-- Nav Item - Dashboard -->
         <li class="nav-item">
-            <a class="nav-link" href="">
+            <a class="nav-link" href="{{ route('admin') }}">
                 <i class="fas fa-fw fa-tachometer-alt"></i>
                 <span>{{ __('Dashboard') }}</span></a>
         </li>
@@ -53,7 +53,43 @@
                 <span>{{ __('Kategori') }}</span></a>
 
         </li>
-      
+        <li class="nav-item">
+            <a class="nav-link" href="{{ route('admin.pemasok') }}">
+                <i class="fas fa-fw fa-tachometer-alt"></i>
+                <span>{{ __('Pemasok') }}</span></a>
+
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="{{ route('admin.member') }}">
+                <i class="fas fa-fw fa-tachometer-alt"></i>
+                <span>{{ __('Member') }}</span></a>
+
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="{{ route('admin.barang') }}">
+                <i class="fas fa-fw fa-tachometer-alt"></i>
+                <span>{{ __('Barang') }}</span></a>
+
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="{{ route('admin.penjualan') }}">
+                <i class="fas fa-fw fa-tachometer-alt"></i>
+                <span>{{ __('Penjualan') }}</span></a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="{{ route('admin.penjualan') }}">
+                <i class="fas fa-fw fa-tachometer-alt"></i>
+                <span>{{ __('Pembelian') }}</span></a>
+        </li>
+
+        <li class="nav-item">
+            <a class="nav-link" href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+            <i class="fas fa-fw fa-sign-out-alt"></i>
+            <span>{{ __('Logout') }}</span></a>
+            <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+            @csrf
+            </form>
+        </li>
         <!-- Divider -->
         <hr class="sidebar-divider">
 

@@ -14,7 +14,8 @@ class MemberController extends Controller
      */
     public function index()
     {
-        return view('home');
+       $members = Member::all();
+        return view('admin.member.index', compact('members'));
     }
 
     /**
@@ -31,18 +32,21 @@ class MemberController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'nama_pelanggan' => 'required|string',
-            'alamat' => 'required|string',
-            'no_hp' => 'required|string',
+            'nama_pelanggan' => 'required|string|max:255',
+            'email' => 'required|string|max:255',
+            'no_telp' => 'required|string|max:15',
         ]);
+
+        $kode_pelanggan = random_int(100000, 999999);
 
         $member = Member::create([
             'nama_pelanggan' => $request->nama_pelanggan,
-            'alamat' => $request->alamat,
-            'no_hp' => $request->no_hp,
+            'email' => $request->email,
+            'no_telp' => $request->no_telp,
+            'kode_pelanggan' => $kode_pelanggan,
         ]);
 
-        return redirect()->route('member.create', compact('member'))->with('success', 'Member berhasil ditambahkan');
+        return redirect()->route('admin.member', compact('member'))->with('success', 'Member berhasil ditambahkan dengan kode pelanggan: ' . $kode_pelanggan);
     }
 
     /**
@@ -59,20 +63,20 @@ class MemberController extends Controller
     public function edit(Request $request)
     {
         $request->validate([
-            'nama_pelanggan' => 'required|string',
-            'alamat' => 'required|string',
-            'no_hp' => 'required|string',
+            'nama_pelanggan' => 'required|string|max:255',
+            'email' => 'required|string|max:255',
+            'no_telp' => 'required|string|max:15',
         ]);
 
         $member = Member::find($request->id);
         
         $member->update([
             'nama_pelanggan' => $request->nama_pelanggan,
-            'alamat' => $request->alamat,
-            'no_hp' => $request->no_hp,
+            'email' => $request->email,
+            'no_telp' => $request->no_telp,
         ]);
 
-        return redirect()->route('member.index')->with('success', 'Member berhasil diubah');
+        return redirect()->route('admin.member')->with('success', 'Member berhasil diubah');
     }
 
     /**

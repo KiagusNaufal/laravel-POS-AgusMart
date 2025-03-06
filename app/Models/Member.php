@@ -14,7 +14,7 @@ class Member extends Model
         'kode_pelanggan',
         'nama_pelanggan',
         'no_telp',
-        'alamat',
+        'email',
     ];
 
     public function penjualan()

@@ -12,10 +12,10 @@
     <div class="col-lg-12 mb-4">
         <div class="card shadow mb-4">
             <div class="card-header py-4">
-                <h6 class="m-0 font-weight-bold text-primary mb-2">Data Kategori Barang</h6>
+                <h6 class="m-0 font-weight-bold text-primary mb-2">Data Member</h6>
                 <!-- Button trigger modal for Add -->
                 <button type="button" class="btn btn-primary" id="addButton">
-                    Tambah Kategori Barang
+                    Tambah Member
                 </button>
             </div>
 
@@ -35,19 +35,29 @@
                         <thead>
                             <tr>
                                 <th>No</th>
-                                <th>Kategori</th>
+                                <th>Kode Pelanggan</th>
+                                <th>Nama Pelanggan</th>
+                                <th>No. Telp</th>
+                                <th>Email</th>
                                 <th>Aksi</th>
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach($kategori as $item)
+                            @foreach($members as $item)
                             <tr>
                                 <td>{{ $loop->iteration }}</td>
-                                <td>{{ $item->nama_kategori }}</td>
+                                <td>{{ $item->kode_pelanggan }}</td>
+                                <td>{{ $item->nama_pelanggan }}</td>
+                                <td>{{ $item->no_telp }}</td>
+                                <td>{{ $item->email }}</td>
                                 <td>
                                     <button class="btn btn-primary btn-sm editButton"
                                         data-id="{{ $item->id }}"
-                                        data-nama_kategori="{{ $item->nama_kategori }}" >
+                                        data-kode_pelanggan="{{ $item->kode_pelanggan }}"
+                                        data-nama_pelanggan="{{ $item->nama_pelanggan }}"
+                                        data-no_telp="{{ $item->no_telp }}"
+                                        data-email="{{ $item->email }}"
+                                        >
                                         Edit
                                     </button>
                                     {{-- <form action="{{ route('jenis-barang.delete', ['id' => $item->id]) }}" method="POST" style="display:inline;">
@@ -71,7 +81,7 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="itemModalLabel">Tambah Kategori Barang</h5>
+                <h5 class="modal-title" id="itemModalLabel">Tambah Pemasok Barang</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -82,8 +92,17 @@
                 <input type="hidden" id="itemId" name="id">
                 <div class="modal-body">
                     <div class="form-group">
-                        <label for="nama_kategori">Jenis Barang</label>
-                        <input type="text" class="form-control" id="nama_kategori" name="nama_kategori" required>
+                        <label for="nama_pelanggan">Nama Pelanggan</label>
+                        <input type="text" class="form-control" id="nama_pelanggan" name="nama_pelanggan" required>
+                    </div>
+                    <div class="form-group">
+                    <div class="form-group">
+                        <label for="no_telp">No. Telp</label>
+                        <input type="number" class="form-control" id="no_telp" name="no_telp" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" class="form-control" id="email" name="email" required>
                     </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
@@ -98,9 +117,9 @@
     // Tambah Barang
     document.getElementById('addButton').addEventListener('click', function () {
         resetForm();
-        document.getElementById('itemForm').action = "{{ route('kategori.store') }}";
+        document.getElementById('itemForm').action = "{{ route('admin.member.store') }}";
         document.getElementById('methodField').value = 'POST';
-        document.getElementById('itemModalLabel').innerText = 'Tambah Jenis Barang';
+        document.getElementById('itemModalLabel').innerText = 'Tambah Member';
         $('#itemModal').modal('show');
     });
 
@@ -111,12 +130,14 @@
             const item = this.dataset;
 
             document.getElementById('itemId').value = item.id;
-            document.getElementById('nama_kategori').value = item.nama_kategori;
+            document.getElementById('nama_pelanggan').value = item.nama_pelanggan;
+            document.getElementById('no_telp').value = item.no_telp;
+            document.getElementById('email').value = item.email;
 
 
-            document.getElementById('itemForm').action = `/admin/kategori/${item.id}`;
+            document.getElementById('itemForm').action = `/admin/member/${item.id}`;
             document.getElementById('methodField').value = 'POST';
-            document.getElementById('itemModalLabel').innerText = 'Edit Barang';
+            document.getElementById('itemModalLabel').innerText = 'Edit Member';
             $('#itemModal').modal('show');
         });
     });
