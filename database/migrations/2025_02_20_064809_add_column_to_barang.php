@@ -12,6 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('barang', function (Blueprint $table) {
+            $table->double('harga_beli')->after('harga_jual');
             $table->decimal('persentase_keuntungan')->after('harga_beli');
             $table->dropColumn('harga_jual');
         });

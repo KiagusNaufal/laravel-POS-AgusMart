@@ -37,6 +37,7 @@ Route::group(['prefix' => 'admin', 'middleware' => ['role:admin']], function () 
 
     Route::group(['prefix' => 'penjualan'], function () {
         Route::get('/', [TransaksiController::class, 'index'])->name('admin.penjualan');
+        Route::get('/search', [TransaksiController::class, 'search'])->name('admin.penjualan.search');
         Route::post('/store', [TransaksiController::class, 'store'])->name('admin.penjualan.store');
     });
 });
