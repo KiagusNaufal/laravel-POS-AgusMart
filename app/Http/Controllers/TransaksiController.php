@@ -5,10 +5,13 @@ namespace App\Http\Controllers;
 use App\Models\Barang;
 use App\Models\DetailPenjualan;
 use App\Models\Member;
+use App\Models\Pemasok;
+use App\Models\Pembelian;
 use App\Models\Penjualan;
 use Illuminate\Container\Attributes\Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth as FacadesAuth;
+use Illuminate\Support\Facades\Log;
 
 class TransaksiController extends Controller
 {
@@ -82,6 +85,40 @@ class TransaksiController extends Controller
         } catch (\Exception $e) {
             return redirect()->back()->withErrors(['error' => 'Terjadi kesalahan saat menyimpan transaksi: ' . $e->getMessage()]);
         }
+    }
+
+
+    public function pembelian() {
+        $pembelian = Pembelian::with('detail_pembelian.barang')->get();
+        return view('admin.pembelian.index', compact('pembelian'));
+    }
+
+    public function createPembelian() {
+        return view('admin.pembelian.create');
+    }
+    public function searchPembelian(Request $request)
+    {
+ $query = trim($request->input('q'));
+
+    Log::info("Query Barang: " . ($query ?: 'NULL')); // Debugging log
+
+    if ($query === '') {
+        return response()->json([]); // Jangan kembalikan data jika query kosong
+    }
+        $items = Barang::where('nama_barang', 'LIKE', "%{$query}%")
+                     ->orWhere('kode_barang', 'LIKE', "%{$query}%")
+                     ->get();
+    
+        return response()->json($items);
+    }
+    
+    
+    public function searchVendor(Request $request)
+    {
+        $query = trim($request->input('q'));
+        $results = Pemasok::where('nama_pemasok', 'like', "%{$query}%")
+                         ->get();
+        return response()->json($results);
     }
 
 }
