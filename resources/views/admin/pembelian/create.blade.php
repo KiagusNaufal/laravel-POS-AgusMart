@@ -3,15 +3,30 @@
 @section('main-content')
 <div class="container">
     <h2 class="mt-4 mb-3">Transaksi Pembelian</h2>
+    @if ($errors->any())
+            <div class="alert alert-danger border-left-danger" role="alert">
+                <ul class="pl-4 my-2">
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+            @endif
+    @if(session('success'))
+        <div class="alert alert-success">
+            {{ session('success') }}
+        </div>
 
+    @endif
     <div class="card">
         <div class="card-body">
-            <form action="" method="POST">
+            <form action="{{ route('admin.pembelian.store') }}" method="POST">
                 @csrf
                 <div class="form-group">
-                    <label for="vendor">Pilih Pemasok</label>
+                    <label for="id_pemasok">Pilih Pemasok</label>
                     <div class="input-group">
-                        <input type="text" id="vendor" name="vendor" class="form-control" readonly placeholder="Klik untuk memilih pemasok">
+                        <input type="text" id="nama_pemasok" class="form-control" readonly placeholder="Klik untuk memilih pemasok">
+                        <input type="hidden" id="id_pemasok" name="id_pemasok">
                         <div class="input-group-append">
                             <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#vendorModal">Pilih</button>
                         </div>
@@ -30,6 +45,7 @@
                             <th>Nama Barang</th>
                             <th>Harga Beli</th>
                             <th>Stok</th>
+                            <th>Sub Total</th>
                             <th>Aksi</th>
                         </tr>
                     </thead>
@@ -121,14 +137,15 @@ document.getElementById('searchVendor').addEventListener('input', function () {
                 row.innerHTML = `
                     <td>${vendor.nama_pemasok}</td>
                     <td>${vendor.alamat}</td>
-                    <td><button class="btn btn-sm btn-info pilih-vendor" data-nama="${vendor.nama_pemasok}">Pilih</button></td>
+                    <td><button class="btn btn-sm btn-info pilih-vendor" data-id="${vendor.id}" data-nama="${vendor.nama_pemasok}">Pilih</button></td>
                 `;
                 vendorList.appendChild(row);
             });
 
             document.querySelectorAll('.pilih-vendor').forEach(button => {
                 button.addEventListener('click', function () {
-                    document.getElementById('vendor').value = this.getAttribute('data-nama');
+                    document.getElementById('id_pemasok').value = this.getAttribute('data-id');
+                    document.getElementById('nama_pemasok').value = this.getAttribute('data-nama');
                     $('#vendorModal').modal('hide');
                 });
             });
@@ -152,12 +169,12 @@ document.getElementById('searchItem').addEventListener('input', function () {
             const selectedItems = Array.from(document.querySelectorAll('#selectedItemsTable tbody tr')).map(row => row.cells[0].innerText);
 
             data.forEach(item => {
-                if (!selectedItems.includes(item.kode_barang)) {
+                if (!selectedItems.includes(item.id)) {
                     let row = document.createElement('tr');
                     row.innerHTML = `
                         <td>${item.kode_barang}</td>
                         <td>${item.nama_barang}</td>
-                        <td><button class="btn btn-sm btn-info pilih-item" data-kode="${item.kode_barang}" data-nama="${item.nama_barang}">Pilih</button></td>
+                        <td><button class="btn btn-sm btn-info pilih-item" data-kode="${item.kode_barang}" data-nama="${item.nama_barang}" data-id="${item.id}">Pilih</button></td>
                     `;
                     itemList.appendChild(row);
                 }
@@ -166,6 +183,7 @@ document.getElementById('searchItem').addEventListener('input', function () {
             document.querySelectorAll('.pilih-item').forEach(button => {
                 button.addEventListener('click', function () {
                     const itemCode = this.getAttribute('data-kode');
+                    const itemId = this.getAttribute('data-id');
                     const itemName = this.getAttribute('data-nama');
                     const table = document.getElementById('selectedItemsTable').getElementsByTagName('tbody')[0];
 
@@ -177,10 +195,11 @@ document.getElementById('searchItem').addEventListener('input', function () {
 
                     let row = table.insertRow();
                     row.innerHTML = `
-                        <td>${itemCode}<input type="hidden" name="kode_barang[]" value="${itemCode}"></td>
+                        <td>${itemCode}<input type="hidden" name="id_barang[]" value="${itemId}"></td>
                         <td>${itemName}<input type="hidden" name="items[]" value="${itemName}"></td>
-                        <td><input type="number" name="harga_beli[]" class="form-control" required></td>
-                        <td><input type="number" name="stok[]" class="form-control" required></td>
+                        <td><div class="input-group"><div class="input-group-prepend"><span class="input-group-text">Rp</span></div><input type="number" name="harga_beli[]" class="form-control harga_beli" required></div></td>
+                        <td><input type="number" name="jumlah[]" class="form-control jumlah" required></td>
+                        <td class="sub_total">Rp 0</td>
                         <td><button type="button" class="btn btn-danger btn-sm remove-item">Hapus</button></td>
                     `;
                     $('#itemModal').modal('hide');
@@ -188,12 +207,31 @@ document.getElementById('searchItem').addEventListener('input', function () {
                     document.querySelectorAll('.remove-item').forEach(button => {
                         button.addEventListener('click', function () {
                             this.closest('tr').remove();
+                            calculateSubTotal();
                         });
                     });
+
+                    document.querySelectorAll('.harga_beli, .jumlah').forEach(input => {
+                        input.addEventListener('input', function () {
+                            calculateSubTotal();
+                        });
+                    });
+
+                    calculateSubTotal();
                 });
             });
         });
 });
+
+function calculateSubTotal() {
+    document.querySelectorAll('#selectedItemsTable tbody tr').forEach(row => {
+        const hargaBeli = row.querySelector('.harga_beli').value;
+        const jumlah = row.querySelector('.jumlah').value;
+        const subTotal = row.querySelector('.sub_total');
+
+        subTotal.innerText = `Rp ${hargaBeli * jumlah}`;
+    });
+}
 </script>
 
 @endsection

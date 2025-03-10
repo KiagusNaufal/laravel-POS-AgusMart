@@ -21,10 +21,17 @@ class MemberController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
+    public function search(Request $request)
     {
-        
+        $query = $request->input('query');
+        $results = Member::where('no_telp', 'like', "%$query%")
+                         ->orWhere('kode_pelanggan', 'like', "%$query%")
+                         ->orWhere('nama_pelanggan', 'like', "%$query%")
+                         ->get();
+        return response()->json($results);
     }
+
+    
 
     /**
      * Store a newly created resource in storage.

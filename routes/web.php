@@ -39,10 +39,13 @@ Route::group(['prefix' => 'admin', 'middleware' => ['role:admin']], function () 
         Route::get('/', [TransaksiController::class, 'index'])->name('admin.penjualan');
         Route::get('/search', [TransaksiController::class, 'search'])->name('admin.penjualan.search');
         Route::post('/store', [TransaksiController::class, 'store'])->name('admin.penjualan.store');
+        Route::get('search-member', [MemberController::class, 'search'])->name('admin.penjualan.search-member');
+        Route::get('/struk/{id}', [TransaksiController::class, 'showStruk'])->name('struk');
     });
 
     Route::group(['prefix' => 'pembelian'], function () {
         Route::get('/', [TransaksiController::class, 'pembelian'])->name('admin.pembelian');
+        Route::post('/store', [TransaksiController::class, 'storePembelian'])->name('admin.pembelian.store');
         Route::get('/search-barang', [TransaksiController::class, 'searchPembelian'])->name('admin.pembelian.search');
         Route::get('/search-pemasok', [TransaksiController::class, 'searchVendor'])->name('admin.pembelian.search-pemasok');
         Route::get('/create', [TransaksiController::class, 'createPembelian'])->name('admin.pembelian.create');

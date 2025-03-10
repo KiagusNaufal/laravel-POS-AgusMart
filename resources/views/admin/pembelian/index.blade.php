@@ -13,8 +13,7 @@
         <div class="card shadow mb-4">
             <div class="card-header py-4">
                 <h6 class="m-0 font-weight-bold text-primary mb-2">Data Pembelian Barang</h6>
-                <!-- Button trigger modal for Add -->
-                <a href="{{ route('admin.pembelian.create') }}" class="btn btn-primary" id="addButton">
+                <a href="{{ route('admin.pembelian.create') }}" class="btn btn-primary">
                     Restok Barang
                 </a>
             </div>
@@ -50,9 +49,15 @@
                                 <td>{{ $item->tanggal_masuk }}</td>
                                 <td>{{ $item->pemasok->nama_pemasok }}</td>
                                 <td>{{ $item->user->name }}</td>
+                                <td>
+    <button class="btn btn-info btn-detail"
+            data-bs-toggle="modal"
+            data-bs-target="#detailModal"
+            data-item='@json($item->load("detail_pembelian.barang"))'>
+        Detail
+    </button>
+</td>
 
-                                    </form>
-                                </td>
                             </tr>
                             @endforeach
                         </tbody>
@@ -62,4 +67,105 @@
         </div>
     </div>
 </div>
+<!-- Modal -->
+<!-- Modal -->
+<div class="modal fade" id="detailModal" tabindex="-1" aria-labelledby="detailModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="detailModalLabel">Detail Pembelian</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p><strong>Kode Masuk:</strong> <span id="kodeMasuk"></span></p>
+                <p><strong>Tanggal Masuk:</strong> <span id="tanggalMasuk"></span></p>
+                <p><strong>Pemasok:</strong> <span id="pemasok"></span></p>
+                <p><strong>Input:</strong> <span id="input"></span></p>
+
+                <h5>Detail Barang:</h5>
+                <div class="table-responsive">
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th>Nama Barang</th>
+                                <th>Jumlah</th>
+                                <th>Harga Beli</th>
+                                <th>Subtotal</th>
+                            </tr>
+                        </thead>
+                        <tbody id="detailBarang"></tbody>
+                    </table>
+                </div>
+
+                <p><strong>Total:</strong> <span id="total"></span></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    document.querySelectorAll(".btn-detail").forEach((button) => {
+        button.addEventListener("click", function () {
+            const itemData = this.getAttribute("data-item");
+
+            if (!itemData) {
+                console.error("Data item tidak ditemukan!");
+                return;
+            }
+
+            const item = JSON.parse(itemData);
+
+            document.getElementById("kodeMasuk").textContent = item.kode_masuk;
+            document.getElementById("tanggalMasuk").textContent = item.tanggal_masuk;
+            document.getElementById("pemasok").textContent = item.pemasok.nama_pemasok;
+            document.getElementById("input").textContent = item.user.name;
+
+            const detailBarang = document.getElementById("detailBarang");
+            detailBarang.innerHTML = "";
+
+            let total = 0;
+            if (item.detail_pembelian.length > 0) {
+                item.detail_pembelian.forEach((detail) => {
+                    const tr = document.createElement("tr");
+
+                    tr.innerHTML = `
+                        <td>${detail.barang.nama_barang}</td>
+                        <td>${detail.jumlah}</td>
+                        <td>Rp ${new Intl.NumberFormat("id-ID").format(detail.barang.harga_beli)}</td>
+                        <td>Rp ${new Intl.NumberFormat("id-ID").format(detail.sub_total)}</td>
+                    `;
+
+                    detailBarang.appendChild(tr);
+                    total += detail.sub_total;
+                });
+            } else {
+                const emptyRow = document.createElement("tr");
+                emptyRow.innerHTML = `<td colspan="4" class="text-center">Tidak ada data barang</td>`;
+                detailBarang.appendChild(emptyRow);
+            }
+
+            document.getElementById("total").textContent = `Rp ${new Intl.NumberFormat("id-ID").format(total)}`;
+
+            // Initialize and show the modal
+            const modalElement = document.getElementById("detailModal");
+            const modal = new bootstrap.Modal(modalElement);
+            modal.show();
+
+            // Ensure the modal can be closed
+            modalElement.addEventListener('hidden.bs.modal', function () {
+                document.getElementById("kodeMasuk").textContent = '';
+                document.getElementById("tanggalMasuk").textContent = '';
+                document.getElementById("pemasok").textContent = '';
+                document.getElementById("input").textContent = '';
+                detailBarang.innerHTML = '';
+                document.getElementById("total").textContent = '';
+            });
+        });
+    });
+});
+</script>
+    
 @endsection

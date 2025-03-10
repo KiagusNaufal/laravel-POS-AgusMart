@@ -29,6 +29,7 @@
     <div class="card shadow mb-4">
         <div class="card-body">
             <form id="searchForm">
+                <label for="searchBarang">Cari Barang</label>
                 <div class="input-group">
                     <input type="text" name="query" class="form-control" placeholder="Cari barang berdasarkan kode atau nama" value="{{ request('query') }}">
                     <div class="input-group-append">
@@ -39,9 +40,23 @@
         </div>
     </div>
 
+    <!-- Form Pencarian Member -->
+    <div class="card shadow mb-4">
+        <div class="card-body">
+            <label for="searchMember">Cari Member</label>
+            <div class="input-group">
+                <input type="text" id="searchMember" class="form-control" placeholder="Masukkan nama atau ID member">
+                <div class="input-group-append">
+                    <button class="btn btn-primary" type="button" onclick="searchMember()">Cari</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Form Transaksi -->
     <form action="{{ route('admin.penjualan.store') }}" method="post" id="transactionForm">
         @csrf
+        <input type="hidden" id="selectedMemberId" name="id_member">
         <!-- Keranjang Belanja -->
         <div class="card shadow mb-4">
             <div class="card-header py-3">
@@ -84,6 +99,25 @@
             </div>
         </div>
     </div>
+
+    <div class="modal fade" id="searchMemberModal" tabindex="-1" role="dialog" aria-labelledby="searchMemberModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="searchMemberModalLabel">Hasil Pencarian Member</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body" id="searchMemberResults">
+                    <!-- Hasil pencarian akan ditampilkan di sini -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 <!-- Script untuk Keranjang Belanja dan Pencarian -->
@@ -93,6 +127,52 @@
     // Fungsi untuk format angka menjadi mata uang Rupiah
     function formatCurrency(amount) {
         return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(amount);
+    }
+
+    function searchMember() {
+        let query = document.getElementById('searchMember').value;
+        if (!query) {
+            alert("Masukkan nama atau ID member.");
+            return;
+        }
+
+        fetch(`/admin/penjualan/search-member?query=${query}`)
+            .then(response => response.json())
+            .then(data => {
+                let searchMemberResults = document.getElementById('searchMemberResults');
+                searchMemberResults.innerHTML = '';
+
+                if (data.length === 0) {
+                    searchMemberResults.innerHTML = '<p class="text-center">Member tidak ditemukan.</p>';
+                } else {
+                    data.forEach(member => {
+                        let memberCard = document.createElement('div');
+                        memberCard.classList.add('card', 'mb-3');
+                        memberCard.innerHTML = `
+                            <div class="card-body">
+                                <h5 class="card-title">${member.nama_pelanggan}</h5>
+                                <p class="card-text">
+                                    <strong>No:</strong> ${member.no_telp}<br>
+                                    <strong>Kode Pelanggan:</strong> ${member.kode_pelanggan}
+                                </p>
+                                <button class="btn btn-success btn-sm" onclick="selectMember(${member.id}, '${member.nama_pelanggan}')">
+                                    Pilih Member
+                                </button>
+                            </div>
+                        `;
+                        searchMemberResults.appendChild(memberCard);
+                    });
+                }
+
+                $('#searchMemberModal').modal('show');
+            })
+            .catch(error => console.error("Error fetching members:", error));
+    }
+
+    function selectMember(id, nama) {
+        document.getElementById('selectedMemberId').value = id;
+        document.getElementById('searchMember').value = nama;
+        $('#searchMemberModal').modal('hide');
     }
 
     // Fungsi untuk memformat input uang cash
@@ -299,6 +379,10 @@
             hargaJualInput.value = product.harga;
             document.getElementById('transactionForm').appendChild(hargaJualInput);
         });
+
+        // Convert cash input to integer
+        let cashInput = document.getElementById('cash');
+        cashInput.value = parseInt(cashInput.value.replace(/[^,\d]/g, ''));
     });
 
     // Tambahkan event listener untuk memformat input uang cash

@@ -21,9 +21,7 @@ class DetailPenjualan extends Model
 
     public function barang()
     {
-        return $this->belongsTo(Barang::class, 'id_barang
-
-        ', 'id');
+        return $this->belongsTo(Barang::class, 'id_barang', 'id');
         }
         public function penjualan()
         {
