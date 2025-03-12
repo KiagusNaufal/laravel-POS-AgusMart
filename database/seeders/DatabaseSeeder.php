@@ -14,19 +14,6 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // User::factory(10)->create();
-
-        User::factory()->create([
-            'name' => 'Test Kasir',
-            'email' => 'kasir@gmail.com',
-            'password' => Hash::make('password'),
-            'role' => 'kasir',
-        ]);
-        User::factory()->create([
-            'name' => 'Test Admin',
-            'email' => 'admin@gmail.com',
-            'password' => Hash::make('password'),
-            'role' => 'admin',
-        ]);
+        $this->call([KategoriSeeder::class]);
     }
 }

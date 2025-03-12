@@ -27,15 +27,19 @@ class TransaksiController extends Controller
     public function search(Request $request)
     {
         $query = $request->input('query');
-        $results = Barang::where('nama_barang', 'like', "%$query%")
-                         ->orWhere('kode_barang', 'like', "%$query%")
-                         ->get();
+
+        $results = Barang::where(function ($q) use ($query) {
+            $q->where('nama_barang', 'like', "%$query%")
+                ->orWhere('kode_barang', 'like', "%$query%");
+        })
+            ->where('ditarik', '!=', 1)
+            ->get();
+
         return response()->json($results);
     }
-    
 
     public function store(Request $request)
-    {   
+    {
         $request->validate([
             'id_member' => 'required|exists:member,id',
             'id_barang' => 'required|array',
@@ -45,7 +49,7 @@ class TransaksiController extends Controller
             'harga_jual' => 'required|array',
             'harga_jual.*' => 'required|numeric|min:0',
         ]);
-        
+
         $user = FacadesAuth::user();
         $userId = $user->id;
 
@@ -83,9 +87,9 @@ class TransaksiController extends Controller
                     $barang->save();
                 }
             }
-                $cash = $request->cash;
-                $kembalian = $cash - $penjualan->total;
-        
+            $cash = $request->cash;
+            $kembalian = $cash - $penjualan->total;
+
 
             return redirect()->route('struk', [
                 'id' => $penjualan->id,
@@ -96,51 +100,53 @@ class TransaksiController extends Controller
             return redirect()->back()->withErrors(['error' => 'Terjadi kesalahan saat menyimpan transaksi: ' . $e->getMessage()]);
         }
     }
-    
+
     public function showStruk($id)
     {
-        $penjualan = Penjualan::with(['detail_penjualan' => function($query) use ($id) {
-            $query->with(['barang' => function($query) {
+        $penjualan = Penjualan::with(['detail_penjualan' => function ($query) use ($id) {
+            $query->with(['barang' => function ($query) {
                 $query->whereNotNull('nama_barang');
             }])->where('id_penjualan', $id);
         }])->findOrFail($id);
-        
+
         return view('admin.penjualan.struk', compact('penjualan'));
     }
 
 
 
-    public function pembelian() {
+    public function pembelian()
+    {
         $pembelian = Pembelian::with('user', 'detail_pembelian.barang')->get();
 
         return view('admin.pembelian.index', compact('pembelian'));
     }
 
-    public function createPembelian() {
+    public function createPembelian()
+    {
         return view('admin.pembelian.create');
     }
+
     public function searchPembelian(Request $request)
     {
- $query = trim($request->input('q'));
+        $query = trim($request->input('q'));
 
-    Log::info("Query Barang: " . ($query ?: 'NULL')); // Debugging log
+        Log::info("Query Barang: " . ($query ?: 'NULL')); // Debugging log
 
-    if ($query === '') {
-        return response()->json([]); // Jangan kembalikan data jika query kosong
-    }
+        if ($query === '') {
+            return response()->json([]); // Jangan kembalikan data jika query kosong
+        }
         $items = Barang::where('nama_barang', 'LIKE', "%{$query}%")
-                     ->orWhere('kode_barang', 'LIKE', "%{$query}%")
-                     ->get();
-    
+            ->orWhere('kode_barang', 'LIKE', "%{$query}%")
+            ->get();
+
         return response()->json($items);
     }
-    
-    
+
     public function searchVendor(Request $request)
     {
         $query = trim($request->input('q'));
         $results = Pemasok::where('nama_pemasok', 'like', "%{$query}%")
-                         ->get();
+            ->get();
         return response()->json($results);
     }
 
@@ -155,7 +161,7 @@ class TransaksiController extends Controller
             'harga_beli' => 'required|array',
             'harga_beli.*' => 'required|numeric|min:0',
         ]);
-        
+
         $user = FacadesAuth::user();
         $userId = $user->id;
         Pembelian::create([

@@ -58,7 +58,7 @@
                             <td>{{ $item->harga_beli }}</td>
                             <td>{{ $item->persentase_keuntungan }}%</td>
                             <td>{{ $item->stok }}</td>
-                            <td>{{ $item->ditarik ? 'Ya' : 'Tidak' }}</td>
+                                <td>{{ $item->ditarik == 1 ? 'Iya' : 'Tidak' }}</td>
                             <td>
                                 <button class="btn btn-primary btn-sm editButton"
                                     data-id="{{ $item->id }}"

@@ -6,10 +6,10 @@
     <title>Struk Pembayaran</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Helvetica Neue', Arial, sans-serif;
             text-align: center;
-        }
-        .struk {
+            background-color: #f8f9fa;
+            color: #333;
             width: 250px;
             margin: auto;
             padding: 10px;

@@ -55,9 +55,22 @@
         </li>
         <li class="nav-item">
             <a class="nav-link" href="{{ route('admin.pemasok') }}">
-                <i class="fas fa-fw fa-tachometer-alt"></i>
-                <span>{{ __('Pemasok') }}</span></a>
-
+            <i class="fas fa-fw fa-tachometer-alt"></i>
+            <span>{{ __('Pemasok') }}</span></a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseUtilities" aria-expanded="true" aria-controls="collapseUtilities">
+            <i class="fas fa-fw fa-wrench"></i>
+            <span>{{ __('Laporan') }}</span>
+            </a>
+            <div id="collapseUtilities" class="collapse" aria-labelledby="headingUtilities" data-parent="#accordionSidebar">
+            <div class="bg-white py-2 collapse-inner rounded">
+                <h6 class="collapse-header">{{ __('Laporan:') }}</h6>
+                <a class="collapse-item" href="{{ route('admin.laporan.barang') }}">{{ __('Laporan Barang') }}</a>
+                <a class="collapse-item" href="">{{ __('Laporan Penjualan') }}</a>
+                <a class="collapse-item" href="">{{ __('Laporan Pembelian') }}</a>
+            </div>
+            </div>
         </li>
         <li class="nav-item">
             <a class="nav-link" href="{{ route('admin.member') }}">

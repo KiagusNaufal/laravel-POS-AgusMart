@@ -4,6 +4,7 @@ use App\Http\Controllers\BarangController;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\KategoriController;
+use App\Http\Controllers\LaporanController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\MemberController;
 use App\Http\Controllers\PemasokController;
@@ -49,6 +50,12 @@ Route::group(['prefix' => 'admin', 'middleware' => ['role:admin']], function () 
         Route::get('/search-barang', [TransaksiController::class, 'searchPembelian'])->name('admin.pembelian.search');
         Route::get('/search-pemasok', [TransaksiController::class, 'searchVendor'])->name('admin.pembelian.search-pemasok');
         Route::get('/create', [TransaksiController::class, 'createPembelian'])->name('admin.pembelian.create');
+    });
+
+    Route::group(['prefix' => 'laporan'], function () {
+        Route::get('/barang', [LaporanController::class, 'barang'])->name('admin.laporan.barang');
+        // Route::get('/penjualan', [TransaksiController::class, 'laporanPenjualan'])->name('admin.laporan.penjualan');
+        // Route::get('/pembelian', [TransaksiController::class, 'laporanPembelian'])->name('admin.laporan.pembelian');
     });
 });
 Route::group(['prefix' => 'kasir', 'middleware' => ['role:kasir']], function () {
