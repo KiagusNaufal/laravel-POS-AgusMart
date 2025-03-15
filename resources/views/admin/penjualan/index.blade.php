@@ -3,7 +3,7 @@
 @section('main-content')
 <div class="container-fluid">
     <!-- Page Heading -->
-    <h1 class="h3 mb-4 text-gray-800">Pembelian</h1>
+    <h1 class="h3 mb-4 text-gray-800">Penjualan</h1>
 
     @if(session('success'))
         <div class="alert alert-success">

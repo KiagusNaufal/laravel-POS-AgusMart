@@ -26,13 +26,16 @@ class TransaksiController extends Controller
 
     public function search(Request $request)
     {
-        $query = $request->input('query');
+        $query = trim($request->input('query'));
+
+        if ($query === '') {
+            return response()->json([]); // Return empty array if query is empty
+        }
 
         $results = Barang::where(function ($q) use ($query) {
             $q->where('nama_barang', 'like', "%$query%")
                 ->orWhere('kode_barang', 'like', "%$query%");
         })
-            ->where('ditarik', '!=', 1)
             ->get();
 
         return response()->json($results);
@@ -41,7 +44,6 @@ class TransaksiController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'id_member' => 'required|exists:member,id',
             'id_barang' => 'required|array',
             'id_barang.*' => 'required',
             'jumlah' => 'required|array',
@@ -189,6 +191,12 @@ class TransaksiController extends Controller
                     $barang->stok += $request->jumlah[$index];
                     $barang->save();
                 }
+                                // Update stock in Barang table
+                                $barang = Barang::find($id_barang);
+                                if ($barang) {
+                                    $barang->harga_beli = $request->harga_beli[$index];
+                                    $barang->save();
+                                }
             }
 
             return redirect()->route('admin.pembelian')->with('success', 'Pembelian berhasil disimpan.');

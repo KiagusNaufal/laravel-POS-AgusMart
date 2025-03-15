@@ -6,7 +6,7 @@
     <div class="alert alert-success">
         {{ session('success') }}
     </div>
-@endif
+@endif`
 
 <div class="row">
     <div class="col-lg-12 mb-4">
@@ -50,12 +50,14 @@
                                 <td>{{ $item->pemasok->nama_pemasok }}</td>
                                 <td>{{ $item->user->name }}</td>
                                 <td>
-    <button class="btn btn-info btn-detail"
-            data-bs-toggle="modal"
-            data-bs-target="#detailModal"
-            data-item='@json($item->load("detail_pembelian.barang"))'>
-        Detail
-    </button>
+                                <button class="btn btn-info btn-detail"
+        data-toggle="modal"
+        data-target="#detailModal"
+        data-item="{{ $item->load('detail_pembelian.barang')->toJson() }}">
+    Detail
+</button>
+
+
 </td>
 
                             </tr>
@@ -70,9 +72,10 @@
 <!-- Modal -->
 <!-- Modal -->
 <div class="modal fade" id="detailModal" tabindex="-1" aria-labelledby="detailModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
+
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
                 <h5 class="modal-title" id="detailModalLabel">Detail Pembelian</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
@@ -107,65 +110,57 @@
 </div>
 <script>
 document.addEventListener("DOMContentLoaded", function () {
-    document.querySelectorAll(".btn-detail").forEach((button) => {
-        button.addEventListener("click", function () {
-            const itemData = this.getAttribute("data-item");
+    $(".btn-detail").on("click", function () {
+        const itemData = $(this).data("item");
 
-            if (!itemData) {
-                console.error("Data item tidak ditemukan!");
-                return;
-            }
+        if (!itemData) {
+            console.error("Data item tidak ditemukan!");
+            return;
+        }
 
-            const item = JSON.parse(itemData);
+        // Isi data modal
+        $("#kodeMasuk").text(itemData.kode_masuk);
+        $("#tanggalMasuk").text(itemData.tanggal_masuk);
+        $("#pemasok").text(itemData.pemasok.nama_pemasok);
+        $("#input").text(itemData.user.name);
 
-            document.getElementById("kodeMasuk").textContent = item.kode_masuk;
-            document.getElementById("tanggalMasuk").textContent = item.tanggal_masuk;
-            document.getElementById("pemasok").textContent = item.pemasok.nama_pemasok;
-            document.getElementById("input").textContent = item.user.name;
+        let detailBarang = "";
+        let total = 0;
 
-            const detailBarang = document.getElementById("detailBarang");
-            detailBarang.innerHTML = "";
-
-            let total = 0;
-            if (item.detail_pembelian.length > 0) {
-                item.detail_pembelian.forEach((detail) => {
-                    const tr = document.createElement("tr");
-
-                    tr.innerHTML = `
+        if (itemData.detail_pembelian.length > 0) {
+            itemData.detail_pembelian.forEach((detail) => {
+                detailBarang += `
+                    <tr>
                         <td>${detail.barang.nama_barang}</td>
                         <td>${detail.jumlah}</td>
                         <td>Rp ${new Intl.NumberFormat("id-ID").format(detail.barang.harga_beli)}</td>
                         <td>Rp ${new Intl.NumberFormat("id-ID").format(detail.sub_total)}</td>
-                    `;
-
-                    detailBarang.appendChild(tr);
-                    total += detail.sub_total;
-                });
-            } else {
-                const emptyRow = document.createElement("tr");
-                emptyRow.innerHTML = `<td colspan="4" class="text-center">Tidak ada data barang</td>`;
-                detailBarang.appendChild(emptyRow);
-            }
-
-            document.getElementById("total").textContent = `Rp ${new Intl.NumberFormat("id-ID").format(total)}`;
-
-            // Initialize and show the modal
-            const modalElement = document.getElementById("detailModal");
-            const modal = new bootstrap.Modal(modalElement);
-            modal.show();
-
-            // Ensure the modal can be closed
-            modalElement.addEventListener('hidden.bs.modal', function () {
-                document.getElementById("kodeMasuk").textContent = '';
-                document.getElementById("tanggalMasuk").textContent = '';
-                document.getElementById("pemasok").textContent = '';
-                document.getElementById("input").textContent = '';
-                detailBarang.innerHTML = '';
-                document.getElementById("total").textContent = '';
+                    </tr>
+                `;
+                total += detail.sub_total;
             });
-        });
-    });
+        } else {
+            detailBarang = `<tr><td colspan="4" class="text-center">Tidak ada data barang</td></tr>`;
+        }
+
+        $("#detailBarang").html(detailBarang);
+        $("#total").text(`Rp ${new Intl.NumberFormat("id-ID").format(total)}`);
+
+        // Tampilkan modal manual
+        $("#detailModal").modal("show");
+        $('#detailModal').on('hidden.bs.modal', function () {
+    setTimeout(function() {
+        $('body').removeClass('modal-open');
+    }, 10); // Delay biar Bootstrap kelola backdrop dengan benar
 });
+
+    });
+    
+});
+
+
+
+
 </script>
     
 @endsection
