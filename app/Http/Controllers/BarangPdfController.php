@@ -16,6 +16,7 @@ class BarangPdfController extends Controller
 {
     private function getDataBarang($request)
     {
+        // Ambil Data dari filtering
         $startDate = $request->input('start_date');
         $endDate = $request->input('end_date');
         $searchTerm = $request->input('search_term');

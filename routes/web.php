@@ -10,6 +10,7 @@ use App\Http\Controllers\LoginController;
 use App\Http\Controllers\MemberController;
 use App\Http\Controllers\PemasokController;
 use App\Http\Controllers\PembelianPdfController;
+use App\Http\Controllers\PengajuanBarangController;
 use App\Http\Controllers\PenjualanPdfController;
 use App\Http\Controllers\TransaksiController;
 use App\Models\Pemasok;
@@ -32,6 +33,17 @@ Route::group(['prefix' => 'admin', 'middleware' => ['role:admin']], function () 
         Route::get('/', [MemberController::class, 'index'])->name('admin.member');
         Route::post('/store', [MemberController::class, 'store'])->name('admin.member.store');
         Route::post('/{id}', [MemberController::class, 'edit'])->name('admin.member.update');
+    });
+
+    Route::group(['prefix' => 'pengajuan'], function () {
+        Route::get('/', [PengajuanBarangController::class, 'index'])->name('admin.pengajuan');
+        Route::get('/search-member', [PengajuanBarangController::class, 'search'])->name('admin.pengajuan.search-member');
+        Route::post('/store', [PengajuanBarangController::class, 'store'])->name('admin.pengajuan.store');
+        Route::post('/status/{id}', [PengajuanBarangController::class, 'edit'])->name('admin.pengajuan.edit');
+        Route::post('/{id}', [PengajuanBarangController::class, 'update'])->name('admin.pengajuan.update');
+        Route::delete('/{id}', [PengajuanBarangController::class, 'destroy'])->name('admin.pengajuan.destroy');
+        Route::get('/pdf', [PengajuanBarangController::class, 'generatePDF'])->name('admin.pengajuan.pdf');
+        Route::get('/excel', [PengajuanBarangController::class, 'exportExcel'])->name('admin.pengajuan.excel');
     });
 
     Route::group(['prefix' => 'barang'], function () {

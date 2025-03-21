@@ -15,6 +15,17 @@
 
 <link href="{{ asset('css/sb-admin-2.min.css') }}" rel="stylesheet">    
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<!-- jQuery (Wajib untuk Select2) -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<!-- Select2 JS -->
+<!-- DataTables CSS -->
+<link href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css" rel="stylesheet">
+
+<!-- DataTables JS -->
+<script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>
+<!-- Select2 CSS -->
+<link href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" rel="stylesheet">
 
     <!-- Fonts -->
     <link href="{{ asset('vendor/fontawesome-free/css/all.min.css') }}" rel="stylesheet">
@@ -96,6 +107,11 @@
             <a class="nav-link" href="{{ route('admin.pembelian') }}">
                 <i class="fas fa-fw fa-tachometer-alt"></i>
                 <span>{{ __('Pembelian') }}</span></a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="{{ route('admin.pengajuan') }}">
+                <i class="fas fa-fw fa-tachometer-alt"></i>
+                <span>{{ __('Pengajuan') }}</span></a>
         </li>
 
         <li class="nav-item">
