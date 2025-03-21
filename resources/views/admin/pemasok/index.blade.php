@@ -60,11 +60,13 @@
                                         >
                                         Edit
                                     </button>
-                                    {{-- <form action="{{ route('jenis-barang.delete', ['id' => $item->id]) }}" method="POST" style="display:inline;">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="btn btn-danger btn-sm">Hapus</button>
-                                    </form> --}}
+                                
+                                <button class="btn btn-danger btn-sm deleteButton"
+                                data-id="{{ $item->id }}"
+                                data-nama="{{ $item->nama_pemasok }}">
+                                Hapus
+                            </button>
+                            
                                 </td>
                             </tr>
                             @endforeach
@@ -75,6 +77,32 @@
         </div>
     </div>
 </div>
+
+<!-- Modal Konfirmasi Hapus -->
+<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteModalLabel">Konfirmasi Hapus</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                Apakah Anda yakin ingin menghapus pemasok <strong id="deleteNama"></strong>?
+            </div>
+            <div class="modal-footer">
+                <form id="deleteForm" method="POST">
+                    @csrf
+                    @method('DELETE')
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
+                    <button type="submit" class="btn btn-danger">Hapus</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
 
 <!-- Modal -->
 <div class="modal fade" id="itemModal" tabindex="-1" role="dialog" aria-labelledby="itemModalLabel" aria-hidden="true">
@@ -125,6 +153,21 @@
         document.getElementById('itemModalLabel').innerText = 'Tambah Pemasok Barang';
         $('#itemModal').modal('show');
     });
+
+
+    document.querySelectorAll('.deleteButton').forEach(button => {
+    button.addEventListener('click', function () {
+        const itemId = this.dataset.id;
+        const itemNama = this.dataset.nama;
+
+        document.getElementById('deleteNama').innerText = itemNama;
+        document.getElementById('deleteForm').action = `/admin/pemasok/${itemId}`;
+
+        $('#deleteModal').modal('show');
+    });
+});
+
+
 
     // Edit Barang
     document.querySelectorAll('.editButton').forEach(button => {

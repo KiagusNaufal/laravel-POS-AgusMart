@@ -43,11 +43,11 @@ class LoginController extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return redirect()->route('/');
+        return redirect()->route('auth');
     }
     
     public function log_in(Request $request)
-    {
+    {   
         $credentials = $request->validate([
             'email' => 'required|email',
             'password' => 'required|string'

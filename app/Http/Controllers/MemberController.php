@@ -6,6 +6,7 @@ use App\Models\Member;
 use App\Http\Requests\StoreMemberRequest;
 use App\Http\Requests\UpdateMemberRequest;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class MemberController extends Controller
 {
@@ -15,20 +16,31 @@ class MemberController extends Controller
     public function index()
     {
        $members = Member::all();
-        return view('admin.member.index', compact('members'));
+       $user = Auth::user();
+       if ($user->role == 'admin') {
+           return view('admin.member.index', compact('members'));
+       } elseif ($user->role == 'kasir') {
+           return view('kasir.member.index', compact('members'));
+       } else {
+           return redirect('/');
+       }
     }
 
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
+    public function search(Request $request)
     {
-        
+        $query = $request->input('query');
+        $results = Member::where('no_telp', 'like', "%$query%")
+                         ->orWhere('kode_pelanggan', 'like', "%$query%")
+                         ->orWhere('nama_pelanggan', 'like', "%$query%")
+                         ->get();
+        return response()->json($results);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
+    
+
     public function store(Request $request)
     {
         $request->validate([
@@ -36,19 +48,27 @@ class MemberController extends Controller
             'email' => 'required|string|max:255',
             'no_telp' => 'required|string|max:15',
         ]);
-
+    
         $kode_pelanggan = random_int(100000, 999999);
-
+    
         $member = Member::create([
             'nama_pelanggan' => $request->nama_pelanggan,
             'email' => $request->email,
             'no_telp' => $request->no_telp,
             'kode_pelanggan' => $kode_pelanggan,
         ]);
-
-        return redirect()->route('admin.member', compact('member'))->with('success', 'Member berhasil ditambahkan dengan kode pelanggan: ' . $kode_pelanggan);
+    
+        // Cek role user dan redirect sesuai role
+        $user = Auth::user();
+        if ($user->role == 'admin') {
+            return redirect()->route('admin.member')->with('success', 'Selamat datang, Admin');
+        } elseif ($user->role == 'kasir') {
+            return redirect()->route('kasir.member')->with('success', 'Selamat datang, Kasir');
+        } else {
+            return redirect('/');
+        }
     }
-
+    
     /**
      * Display the specified resource.
      */
@@ -76,7 +96,14 @@ class MemberController extends Controller
             'no_telp' => $request->no_telp,
         ]);
 
-        return redirect()->route('admin.member')->with('success', 'Member berhasil diubah');
+        $user = Auth::user();
+        if ($user->role == 'admin') {
+            return redirect()->route('admin.member')->with('success', 'Selamat datang, Admin');
+        } elseif ($user->role == 'kasir') {
+            return redirect()->route('kasir.member')->with('success', 'Selamat datang, Kasir');
+        } else {
+            return redirect('/');
+        }
     }
 
     /**
@@ -94,6 +121,13 @@ class MemberController extends Controller
     {
         $member = Member::findOrFail($id);
         $member->delete();
-        return redirect()->route('member.index')->with('success', 'Member berhasil dihapus');
+        $user = Auth::user();
+        if ($user->role == 'admin') {
+            return redirect()->route('admin.member')->with('success', 'Selamat datang, Admin');
+        } elseif ($user->role == 'kasir') {
+            return redirect()->route('kasir.member')->with('success', 'Selamat datang, Kasir');
+        } else {
+            return redirect('/');
+        }
     }
 }

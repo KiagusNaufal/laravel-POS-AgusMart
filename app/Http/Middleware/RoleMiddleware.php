@@ -8,12 +8,16 @@ use Illuminate\Support\Facades\Auth;
 
 class RoleMiddleware
 {
-    public function handle(Request $request, Closure $next, $role)
+    public function handle(Request $request, Closure $next, ...$roles)
     {
-        if (Auth::check() && Auth::user()->role == $role) {
-            return $next($request);
+        if (!Auth::check()) {
+            return redirect('/')->with('error', 'Silakan login terlebih dahulu.');
         }
 
-        return redirect('/')->with('error', 'Anda tidak memiliki akses ke halaman ini.');
+        if (!in_array(Auth::user()->role, $roles)) {
+            return redirect('/dashboard')->with('error', 'Anda tidak memiliki akses ke halaman ini.');
+        }
+
+        return $next($request);
     }
 }

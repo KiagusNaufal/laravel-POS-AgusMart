@@ -22,8 +22,7 @@ class Penjualan extends Model
 
     public function member()
     {
-        return $this->belongsTo(Member::class, 'id_member
-        ', 'id');
+        return $this->belongsTo(Member::class, 'id_member', 'id');
         }
         public function user()
         {

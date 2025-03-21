@@ -42,16 +42,33 @@
 
         <!-- Nav Item - Dashboard -->
         <li class="nav-item">
-            <a class="nav-link" href="">
+            <a class="nav-link" href="{{ route('super') }}">
                 <i class="fas fa-fw fa-tachometer-alt"></i>
                 <span>{{ __('Dashboard') }}</span></a>
         </li>
 
-        <li class="nav-item">
-            <a class="nav-link" href="{{ route('kategori') }}">
-                <i class="fas fa-fw fa-tachometer-alt"></i>
-                <span>{{ __('Kategori') }}</span></a>
 
+        <li class="nav-item">
+            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseUtilities" aria-expanded="true" aria-controls="collapseUtilities">
+            <i class="fas fa-fw fa-wrench"></i>
+            <span>{{ __('Laporan') }}</span>
+            </a>
+            <div id="collapseUtilities" class="collapse" aria-labelledby="headingUtilities" data-parent="#accordionSidebar">
+            <div class="bg-white py-2 collapse-inner rounded">
+                <h6 class="collapse-header">{{ __('Laporan:') }}</h6>
+                <a class="collapse-item" href="{{ route('super.laporan.barang') }}">{{ __('Laporan Barang') }}</a>
+                <a class="collapse-item" href="{{ route('super.laporan.penjualan') }}">{{ __('Laporan Penjualan') }}</a>
+                <a class="collapse-item" href="{{ route('super.laporan.pembelian') }}">{{ __('Laporan Pembelian') }}</a>
+            </div>
+            </div>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+            <i class="fas fa-fw fa-sign-out-alt"></i>
+            <span>{{ __('Logout') }}</span></a>
+            <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+            @csrf
+            </form>
         </li>
       
         <!-- Divider -->

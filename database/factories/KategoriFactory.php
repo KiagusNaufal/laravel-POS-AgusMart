@@ -17,7 +17,7 @@ class KategoriFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'nama_kategori' => fake()->randomElement(['Makanan', 'Minuman', 'Pakaian', 'Elektronik', 'Alat Tulis']),    
         ];
     }
 }

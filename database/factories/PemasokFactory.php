@@ -17,7 +17,10 @@ class PemasokFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'nama_pemasok' => $this->faker->word(),
+            'alamat' => $this->faker->address(),
+            'no_telp' => $this->faker->phoneNumber(),
+            'email' => $this->faker->unique()->safeEmail(),
         ];
     }
 }

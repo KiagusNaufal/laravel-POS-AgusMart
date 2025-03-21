@@ -46,6 +46,24 @@
                 <i class="fas fa-fw fa-tachometer-alt"></i>
                 <span>{{ __('Dashboard') }}</span></a>
         </li>
+        <li class="nav-item">
+            <a class="nav-link" href="{{ route('kasir.penjualan') }}">
+                <i class="fas fa-fw fa-tachometer-alt"></i>
+                <span>{{ __('Penjualan') }}</span></a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="{{ route('kasir.member') }}">
+                <i class="fas fa-fw fa-tachometer-alt"></i>
+                <span>{{ __('Member') }}</span></a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+            <i class="fas fa-fw fa-sign-out-alt"></i>
+            <span>{{ __('Logout') }}</span></a>
+            <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+            @csrf
+            </form>
+        </li>
 
 
       

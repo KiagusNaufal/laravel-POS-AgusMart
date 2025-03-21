@@ -51,20 +51,20 @@
                             <td>{{ ($barang->currentPage() - 1) * $barang->perPage() + $loop->iteration }}</td>
                             <td>{{ $item->kode_barang }}</td>
                             <td>{{ $item->nama_barang }}</td>
-                            <td>{{ $item->kategori->nama_kategori }}</td>
+                            <td>{{ $item->kategori->nama_kategori ?? 'tidak ada kategori' }}</td>
                             <td>
                                 <img src="{{ asset('images/' . $item->gambar_barang) }}" alt="{{ $item->nama_barang }}" width="50">
                             </td>
                             <td>{{ $item->harga_beli }}</td>
                             <td>{{ $item->persentase_keuntungan }}%</td>
                             <td>{{ $item->stok }}</td>
-                            <td>{{ $item->ditarik ? 'Ya' : 'Tidak' }}</td>
+                                <td>{{ $item->ditarik == 1 ? 'Iya' : 'Tidak' }}</td>
                             <td>
                                 <button class="btn btn-primary btn-sm editButton"
                                     data-id="{{ $item->id }}"
                                     data-kode_barang="{{ $item->kode_barang }}"
                                     data-nama_barang="{{ $item->nama_barang }}"
-                                    data-kategori="{{ $item->kategori->id }}"
+                                    data-kategori="{{ $item->kategori->id ?? null}}"
                                     data-gambar_barang="{{ $item->gambar_barang }}"
                                     data-harga_beli="{{ $item->harga_beli }}"
                                     data-persentase_keuntungan="{{ $item->persentase_keuntungan }}"

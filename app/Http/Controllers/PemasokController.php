@@ -94,6 +94,6 @@ class PemasokController extends Controller
     {
         $pemasok = Pemasok::findOrFail($id);
         $pemasok->delete();
-        return redirect()->route('pemasok.index')->with('success', 'Pemasok berhasil dihapus');
+        return redirect()->route('admin.pemasok')->with('success', 'Pemasok berhasil dihapus');
     }
 }
