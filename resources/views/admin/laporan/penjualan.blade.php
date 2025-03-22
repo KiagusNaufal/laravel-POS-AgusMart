@@ -97,8 +97,8 @@
 </div>
 <!-- Modal -->
 <!-- Modal -->
-<div class="modal fade" id="detailModal" tabindex="-1" aria-labelledby="detailModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
+<div class="modal fade" id="detailModal" tabindex="-1" role="dialog" aria-labelledby="detailModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="detailModalLabel">Detail Pembelian</h5>
@@ -135,49 +135,53 @@
 </div>
 <script>
 document.addEventListener("DOMContentLoaded", function () {
-    document.querySelectorAll(".btn-detail").forEach((button) => {
-        button.addEventListener("click", function () {
-            const itemData = this.getAttribute("data-item");
+    $(".btn-detail").on("click", function () {
+        const itemData = this.getAttribute("data-item");
 
-            if (!itemData) {
-                console.error("Data item tidak ditemukan!");
-                return;
-            }
 
-            const item = JSON.parse(itemData);
+        if (!itemData) {
+            console.error("Data item tidak ditemukan!");
+            return;
+        }
+        const item = JSON.parse(itemData);
+        // Isi data modal
+        $("#noFaktur").text(item.no_faktur);
+        $("#tanggalFaktur").text(item.tanggal_faktur);
+        $("#member").text(item.member ? item.member.nama_pelanggan : 'Tidak ada member');
+        $("#input").text(item.user.name);
 
-            document.getElementById("noFaktur").textContent = item.no_faktur;
-            document.getElementById("tanggalFaktur").textContent = item.tanggal_faktur;
-            document.getElementById("member").textContent = item.member ? item.member.nama_pelanggan : 'Tidak ada member';
-            document.getElementById("input").textContent = item.user.name;
+        let detailBarang = "";
+        let total = 0;
 
-            const detailBarang = document.getElementById("detailBarang");
-            detailBarang.innerHTML = "";
-
-            let total = 0;
-            if (item.detail_penjualan.length > 0) {
-                item.detail_penjualan.forEach((detail) => {
-                    const tr = document.createElement("tr");
-
-                    tr.innerHTML = `
+        if (item.detail_penjualan.length > 0) {
+            item.detail_penjualan.forEach((detail) => {
+                detailBarang += `
+                    <tr>
                         <td>${detail.barang.nama_barang}</td>
                         <td>${detail.jumlah}</td>
                         <td>Rp ${new Intl.NumberFormat("id-ID").format(detail.barang.harga_beli)}</td>
                         <td>Rp ${new Intl.NumberFormat("id-ID").format(detail.sub_total)}</td>
-                    `;
+                    </tr>
+                `;
+                total += detail.sub_total;
+            });
+        } else {
+            detailBarang = `<tr><td colspan="4" class="text-center">Tidak ada data barang</td></tr>`;
+        }
 
-                    detailBarang.appendChild(tr);
-                    total += detail.sub_total;
-                });
-            } else {
-                const emptyRow = document.createElement("tr");
-                emptyRow.innerHTML = `<td colspan="4" class="text-center">Tidak ada data barang</td>`;
-                detailBarang.appendChild(emptyRow);
-            }
+        $("#detailBarang").html(detailBarang);
+        $("#total").text(`Rp ${new Intl.NumberFormat("id-ID").format(total)}`);
 
-            document.getElementById("total").textContent = `Rp ${new Intl.NumberFormat("id-ID").format(total)}`;
-        });
+        // Tampilkan modal manual
+        $("#detailModal").modal("show");
+        $('#detailModal').on('hidden.bs.modal', function () {
+    setTimeout(function() {
+        $('body').removeClass('modal-open');
+    }, 10); // Delay biar Bootstrap kelola backdrop dengan benar
+});
+
     });
+    
 });
 
 </script>

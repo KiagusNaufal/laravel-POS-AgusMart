@@ -88,6 +88,7 @@
             </div>
         </div>
     </div>
+
         
         <!-- Chart -->
         <div class="row">
@@ -114,6 +115,16 @@
                 </div>
             </div>
         </div>
+        @php
+        $logs = file(storage_path('logs/laravel.log'));
+    @endphp
+    
+    <pre>
+        @foreach ($logs as $log)
+            {{ $log }}
+        @endforeach
+    </pre>
+    
     <script>
         // Set new default font family and font color to mimic Bootstrap's default styling
         Chart.defaults.font.family = 'Nunito, -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif';

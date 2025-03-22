@@ -51,6 +51,13 @@ class TransaksiController extends Controller
 
     public function store(Request $request)
     {
+        $user = FacadesAuth::user();
+    
+        // Cek apakah user memiliki role yang diperbolehkan
+        if (!in_array($user->role, ['admin', 'kasir'])) {
+            return redirect('/')->withErrors(['error' => 'Anda tidak memiliki izin untuk melakukan transaksi']);
+        }
+    
         $request->validate([
             'id_barang' => 'required|array',
             'id_barang.*' => 'required',
@@ -59,17 +66,15 @@ class TransaksiController extends Controller
             'harga_jual' => 'required|array',
             'harga_jual.*' => 'required|numeric|min:0',
         ]);
-
-        $user = FacadesAuth::user();
+    
         $userId = $user->id;
-
         $total = 0;
-
+    
         foreach ($request->id_barang as $index => $id_barang) {
             $sub_total = $request->harga_jual[$index] * $request->jumlah[$index];
             $total += $sub_total;
         }
-
+    
         Penjualan::create([
             'no_faktur' => 'F' . date('YmdHis'),
             'tanggal_faktur' => now(),
@@ -77,8 +82,9 @@ class TransaksiController extends Controller
             'id_member' => $request->id_member,
             'user_id' => $userId,
         ]);
-
+    
         $penjualan = Penjualan::latest('id')->first();
+    
         try {
             foreach ($request->id_barang as $index => $id_barang) {
                 $sub_total = $request->harga_jual[$index] * $request->jumlah[$index];
@@ -89,27 +95,40 @@ class TransaksiController extends Controller
                     'jumlah' => $request->jumlah[$index],
                     'sub_total' => $sub_total,
                 ]);
-
-                // Update stock in Barang table
+    
+                // Update stok barang
                 $barang = Barang::find($id_barang);
                 if ($barang) {
                     $barang->stok -= $request->jumlah[$index];
                     $barang->save();
                 }
             }
-            $cash = $request->cash;
+    
+            $cash = $request->cash ?? 0;
             $kembalian = $cash - $penjualan->total;
-
-
-            return redirect()->route('struk', [
-                'id' => $penjualan->id,
-                'cash' => $cash,
-                'kembalian' => $kembalian
-            ]);
+    
+            if ($user->role == 'admin') {
+                return redirect()->route('struk', [
+                    'id' => $penjualan->id,
+                    'cash' => $cash,
+                    'kembalian' => $kembalian
+                ])->with('success', 'Transaksi berhasil disimpan.');
+            } elseif ($user->role == 'kasir') {
+                return redirect()->route('kasir.struk', [
+                    'id' => $penjualan->id,
+                    'cash' => $cash,
+                    'kembalian' => $kembalian
+                ])->with('success', 'Transaksi berhasil disimpan.');
+            } else {
+                return redirect('/');
+            }
         } catch (\Exception $e) {
-            return redirect()->back()->withErrors(['error' => 'Terjadi kesalahan saat menyimpan transaksi: ' . $e->getMessage()]);
+            Log::error('Error saat menyimpan transaksi: ' . $e->getMessage());
+            return redirect()->back()->withErrors(['error' => 'Terjadi kesalahan saat menyimpan transaksi']);
         }
     }
+    
+    
 
     public function showStruk($id)
     {
@@ -119,7 +138,14 @@ class TransaksiController extends Controller
             }])->where('id_penjualan', $id);
         }])->findOrFail($id);
 
-        return view('admin.penjualan.struk', compact('penjualan'));
+        $user = FacadesAuth::user();
+        if ($user->role == 'admin') {
+            return view('admin.penjualan.struk', compact('penjualan'))->with('success', 'Selamat datang, Admin');
+        } elseif ($user->role == 'kasir') {
+            return view('kasir.penjualan.struk', compact('penjualan'))->with('success', 'Selamat datang, Kasir');
+        } else {
+            return redirect('/');
+        }
     }
 
 
@@ -174,6 +200,8 @@ class TransaksiController extends Controller
 
         $user = FacadesAuth::user();
         $userId = $user->id;
+        Log::info("User ID {$userId} Melakuakn Transaksi Pembelian");
+
         Pembelian::create([
             'kode_masuk' => 'M' . strtoupper(Str::random(8)),
             'tanggal_masuk' => now(),
@@ -199,12 +227,13 @@ class TransaksiController extends Controller
                     $barang->stok += $request->jumlah[$index];
                     $barang->save();
                 }
-                                // Update stock in Barang table
-                                $barang = Barang::find($id_barang);
-                                if ($barang) {
-                                    $barang->harga_beli = $request->harga_beli[$index];
-                                    $barang->save();
-                                }
+
+                // Update purchase price in Barang table
+                $barang = Barang::find($id_barang);
+                if ($barang) {
+                    $barang->harga_beli = $request->harga_beli[$index];
+                    $barang->save();
+                }
             }
 
             return redirect()->route('admin.pembelian')->with('success', 'Pembelian berhasil disimpan.');

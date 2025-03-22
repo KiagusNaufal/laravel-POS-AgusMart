@@ -21,7 +21,7 @@ class PengajuanBarangController extends Controller
     {
         try {
             $pengajuan = PengajuanBarang::all();
-            Log::info('PengajuanBarang fetched successfully', ['pengajuan' => $pengajuan]);
+
         } catch (\Exception $e) {
             Log::error('Failed to get PengajuanBarang', ['error' => $e->getMessage()]);
             return redirect()->back()->withErrors(['error' => 'Gagal Mengambil Data Pengajuan: ' . $e->getMessage()]);
@@ -74,7 +74,7 @@ class PengajuanBarangController extends Controller
                 'jumlah' => $request->jumlah,
                 'terpenuhi' => 0,
             ]);
-            Log::info('PengajuanBarang created successfully', ['pengajuan' => $pengajuan]);
+            Log::info('Pengajuan Barang Oleh', [$pengajuan->member->nama_pelanggan]);
         } catch (\Exception $e) {
             Log::error('Failed to create PengajuanBarang', ['error' => $e->getMessage()]);
             return redirect()->back()->withErrors(['error' => 'Gagal Membuat Data Pengajuan: ' . $e->getMessage()]);

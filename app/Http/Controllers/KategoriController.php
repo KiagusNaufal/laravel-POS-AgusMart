@@ -16,7 +16,11 @@ class KategoriController extends Controller
      */
     public function index()
     {
-        $kategori = Kategori::all();
+        try {
+            $kategori = Kategori::all();
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', $e->getMessage());
+        }
         return view('admin.kategori.index', compact('kategori'));
     }
 
@@ -37,10 +41,13 @@ class KategoriController extends Controller
         $request->validate([
             'nama_kategori' => 'required|string',
         ]);
-
-        $kategori = new Kategori();
-        $kategori->nama_kategori = $request->nama_kategori;
-        $kategori->save();
+        try {
+            $kategori = new Kategori();
+            $kategori->nama_kategori = $request->nama_kategori;
+            $kategori->save();
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', $e->getMessage());
+        }
 
         return redirect()->route('kategori')->with('success', 'Kategori berhasil ditambahkan');
     }
@@ -59,13 +66,13 @@ class KategoriController extends Controller
     public function edit(Request $request, $id)
     {
         $request->validate([
-        'nama_kategori' => 'required|string',
-       ]);
+            'nama_kategori' => 'required|string',
+        ]);
 
         $kategori = Kategori::findOrFail($id);
         $kategori->nama_kategori = $request->nama_kategori;
         $kategori->save();
-         return redirect()->route('kategori')->with('success', 'Kategori berhasil diubah');
+        return redirect()->route('kategori')->with('success', 'Kategori berhasil diubah');
     }
 
     /**

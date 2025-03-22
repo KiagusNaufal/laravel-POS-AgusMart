@@ -24,8 +24,11 @@ class Member extends Model
 
     public function poin()
     {
-        return $this->hasMany(Poin::class, 'id_member
-        ', 'id');
+        return $this->hasMany(Poin::class, 'id_member', 'id');
+    }
+    public function pengajuan_barang()
+    {
+        return $this->hasMany(PengajuanBarang::class, 'id_member', 'id');
     }
 
 }

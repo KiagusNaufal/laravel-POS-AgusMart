@@ -88,7 +88,7 @@ Route::group(['prefix' => 'kasir', 'middleware' => ['role:kasir']], function () 
         Route::get('/search', [TransaksiController::class, 'search'])->name('kasir.penjualan.search');
         Route::post('/store', [TransaksiController::class, 'store'])->name('kasir.penjualan.store');
         Route::get('search-member', [MemberController::class, 'search'])->name('kasir.penjualan.search-member');
-        Route::get('/struk/{id}', [TransaksiController::class, 'showStruk'])->name('struk');
+        Route::get('/struk/{id}', [TransaksiController::class, 'showStruk'])->name('kasir.struk');
     });
 
     Route::group(['prefix' => 'member'], function () {

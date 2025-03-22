@@ -15,7 +15,7 @@ class RoleMiddleware
         }
 
         if (!in_array(Auth::user()->role, $roles)) {
-            return redirect('/dashboard')->with('error', 'Anda tidak memiliki akses ke halaman ini.');
+            return redirect('/admin/penjualan')->with('error', 'Anda tidak memiliki akses ke halaman ini.');
         }
 
         return $next($request);

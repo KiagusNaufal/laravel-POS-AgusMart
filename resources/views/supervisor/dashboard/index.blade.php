@@ -88,7 +88,7 @@
             </div>
         </div>
     </div>
-        
+     
         <!-- Chart -->
         <div class="row">
             <div class="col-12"> <!-- Gunakan col-12 supaya full width -->
@@ -97,6 +97,16 @@
                         <h6 class="m-0 font-weight-bold text-primary">Grafik Pendapatan Bulanan</h6>
                     </div>
                     <div class="card-body">
+                        <form method="GET" action="{{ route('admin') }}" class="form-inline mb-4">
+                            <label for="bulan" class="mr-2">Pilih Bulan:</label>
+                            <select name="bulan" id="bulan" class="form-control" onchange="this.form.submit()">
+                                @foreach ($bulanList as $key => $bulan)
+                                    <option value="{{ $key }}" {{ $selectedMonth == $key ? 'selected' : '' }}>
+                                        {{ $bulan }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </form>
                         <div class="chart-area w-100"> <!-- Tambahkan w-100 -->
                             <canvas id="myAreaChart" style="width: 100%;"></canvas>
                         </div>
@@ -104,6 +114,16 @@
                 </div>
             </div>
         </div>
+        @php
+        $logs = file(storage_path('logs/laravel.log'));
+    @endphp
+    
+    <pre>
+        @foreach ($logs as $log)
+            {{ $log }}
+        @endforeach
+    </pre>
+    
     <script>
         // Set new default font family and font color to mimic Bootstrap's default styling
         Chart.defaults.font.family = 'Nunito, -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif';
@@ -137,93 +157,139 @@ function number_format(number, decimals, dec_point, thousands_sep) {
 var ctx = document.getElementById("myAreaChart");
 
 // Data dari PHP
-var labels = @json($labels);
-var data = @json($data);
+ // Data dari PHP (Blade)
+ var labels = @json($labels);
+    var dataPendapatan = @json($data); // Total Pendapatan
+    var dataTransaksi = @json($dataTransaksi); // Jumlah Transaksi
 
-var myLineChart = new Chart(ctx, {
-    type: 'line',
-    data: {
-        labels: labels,
-        datasets: [{
-            label: "Earnings",
-            data: data,
-            backgroundColor: "rgba(78, 115, 223, 0.05)",
-            borderColor: "rgba(78, 115, 223, 1)",
-            pointRadius: 3,
-            pointBackgroundColor: "rgba(78, 115, 223, 1)",
-            pointBorderColor: "rgba(78, 115, 223, 1)",
-            pointHoverRadius: 3,
-            pointHoverBackgroundColor: "rgba(78, 115, 223, 1)",
-            pointHoverBorderColor: "rgba(78, 115, 223, 1)",
-            pointHitRadius: 10,
-            pointBorderWidth: 2,
-        }],
-    },
-    options: {
-        maintainAspectRatio: false,
-        layout: {
-            padding: {
-                left: 10,
-                right: 25,
-                top: 25,
-                bottom: 0
-            }
-        },
-        scales: {
-            x: {
-                grid: {
-                    display: false,
-                    drawBorder: false
+    var myLineChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: labels,
+            datasets: [
+                {
+                    label: "Jumlah Transaksi",
+                    data: dataTransaksi,
+                    borderColor: "red",
+                    backgroundColor: "rgba(255, 99, 132, 0.5)",
+                    yAxisID: 'y1',
+                    pointStyle: 'circle',
+                    pointRadius: 5,
+                    pointHoverRadius: 7,
+                    borderWidth: 2,
                 },
-                ticks: {
-                    maxTicksLimit: 12
+                {
+                    label: "Total Pendapatan",
+                    data: dataPendapatan,
+                    borderColor: "blue",
+                    backgroundColor: "rgba(54, 162, 235, 0.5)",
+                    yAxisID: 'y',
+                    pointStyle: 'circle',
+                    pointRadius: 5,
+                    pointHoverRadius: 7,
+                    borderWidth: 2,
+                }
+            ]
+        },
+        options: {
+            maintainAspectRatio: false,
+            layout: {
+                padding: {
+                    left: 10,
+                    right: 25,
+                    top: 25,
+                    bottom: 0
                 }
             },
-            y: {
-                ticks: {
-                    maxTicksLimit: 5,
-                    padding: 10,
-                    callback: function(value) {
-                        return 'Rp ' + number_format(value);
+            scales: {
+                x: {
+                    grid: {
+                        display: false,
+                        drawBorder: false
+                    },
+                    ticks: {
+                        maxTicksLimit: 12
                     }
                 },
-                grid: {
-                    color: "rgb(234, 236, 244)",
-                    zeroLineColor: "rgb(234, 236, 244)",
-                    drawBorder: false,
-                    borderDash: [2],
-                    zeroLineBorderDash: [2]
+                y: {
+                    title: {
+                        display: true,
+                        text: "Pendapatan (Rp)"
+                    },
+                    min: 0,
+                    ticks: {
+                        maxTicksLimit: 5,
+                        padding: 10,
+                        callback: function(value) {
+                            return 'Rp ' + number_format(value);
+                        }
+                    },
+                    grid: {
+                        color: "rgb(234, 236, 244)",
+                        zeroLineColor: "rgb(234, 236, 244)",
+                        drawBorder: false,
+                        borderDash: [2],
+                        zeroLineBorderDash: [2]
+                    }
+                },
+                y1: {
+                    title: {
+                        display: true,
+                        text: "Jumlah Transaksi"
+                    },
+                    position: "right",
+                    min: 0,
+                    ticks: {
+                        maxTicksLimit: 5,
+                        padding: 10
+                    },
+                    grid: {
+                        drawOnChartArea: false
+                    }
                 }
             },
-        },
-        plugins: {
-            legend: {
-                display: false
-            },
-            tooltip: {
-                backgroundColor: "rgb(255,255,255)",
-                bodyColor: "#858796",
-                titleMarginBottom: 10,
-                titleColor: '#6e707e',
-                titleFont: { size: 14 },
-                borderColor: '#dddfeb',
-                borderWidth: 1,
-                padding: 15,
-                displayColors: false,
-                caretPadding: 10,
-                callbacks: {
-                    label: function(tooltipItem) {
-                        return tooltipItem.dataset.label + ': Rp ' + number_format(tooltipItem.raw);
+            plugins: {
+                legend: {
+                    display: true,
+                    labels: {
+                        usePointStyle: true,
+                        boxWidth: 15,
+                    },
+                    onClick: (e, legendItem, legend) => {
+                        const index = legendItem.datasetIndex;
+                        const ci = legend.chart;
+                        const meta = ci.getDatasetMeta(index);
+                        meta.hidden = meta.hidden === null ? !ci.data.datasets[index].hidden : null;
+                        ci.update();
+                    }
+                },
+                tooltip: {
+                    backgroundColor: "rgb(255,255,255)",
+                    bodyColor: "#858796",
+                    titleMarginBottom: 10,
+                    titleColor: '#6e707e',
+                    titleFont: { size: 14 },
+                    borderColor: '#dddfeb',
+                    borderWidth: 1,
+                    padding: 15,
+                    displayColors: false,
+                    caretPadding: 10,
+                    callbacks: {
+                        label: function(tooltipItem) {
+                            let value = tooltipItem.raw;
+                            if (tooltipItem.datasetIndex === 0) {
+                                return `Jumlah Transaksi: ${value}`;
+                            } else {
+                                return `Pendapatan: Rp ${number_format(value)}`;
+                            }
+                        }
                     }
                 }
             }
         }
-    }
-});
-
+    });
 function number_format(number) {
     return new Intl.NumberFormat('id-ID').format(number);
 }
-
-    </script>
+</script>
 @endsection
