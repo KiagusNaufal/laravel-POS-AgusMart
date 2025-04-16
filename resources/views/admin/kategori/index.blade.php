@@ -30,7 +30,18 @@
             @endif
 
             <div class="card-body">
-                <div class="table-responsive">
+                <button type="button" class="btn btn-warning btn-block mt-2" id="importButton">
+                    Import Kategori
+                </button>
+                <form method="GET" action="{{ route('kategori.pdf') }}">
+                    @csrf
+                    <button type="submit" class="btn btn-danger btn-block mt-2">Download PDF</button>
+                </form>
+                <form method="GET" action="{{ route('kategori.excel') }}">
+                    @csrf
+                    <button type="submit" class="btn btn-success btn-block mt-2">Download Excel</button>
+                </form>
+                <div class="table-responsive p-3">
                     <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                         <thead>
                             <tr>
@@ -42,7 +53,7 @@
                         <tbody>
                             @foreach($kategori as $item)
                             <tr>
-                                <td>{{ $loop->iteration }}</td>
+        <td>{{ ($kategori->currentPage() - 1) * $kategori->perPage() + $loop->iteration }}</td>
                                 <td>{{ $item->nama_kategori }}</td>
                                 <td>
                                     <button class="btn btn-primary btn-sm editButton"
@@ -50,18 +61,77 @@
                                         data-nama_kategori="{{ $item->nama_kategori }}" >
                                         Edit
                                     </button>
-                                    {{-- <form action="{{ route('jenis-barang.delete', ['id' => $item->id]) }}" method="POST" style="display:inline;">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="btn btn-danger btn-sm">Hapus</button>
-                                    </form> --}}
+                                    <button class="btn btn-danger btn-sm deleteButton"
+                                    data-id="{{ $item->id }}"
+                                    data-nama="{{ $item->nama_kategori }}">
+                                    Hapus
+                                </button>
                                 </td>
                             </tr>
                             @endforeach
                         </tbody>
                     </table>
                 </div>  
+                <div class="d-flex justify-content-center">
+                    {{ $kategori->withQueryString()->links() }}
+
+                </div>
             </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteModalLabel">Konfirmasi Hapus</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                Apakah Anda yakin ingin menghapus Kategori <strong id="deleteNama"></strong>?
+            </div>
+            <div class="modal-footer">
+                <form id="deleteForm" method="POST">
+                    @csrf
+                    @method('DELETE')
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
+                    <button type="submit" class="btn btn-danger">Hapus</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="importModal" tabindex="-1" role="dialog" aria-labelledby="importModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="importModalLabel">Import Data Kategori Barang</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form id="importForm" method="POST" action="{{ route('kategori.import') }}" enctype="multipart/form-data">
+                @csrf
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="file">Pilih File Excel</label>
+                        <input type="file" class="form-control-file" id="file" name="file" required accept=".xlsx, .xls, .csv">
+                        <small class="form-text text-muted">
+                            Format file harus Excel (.xlsx, .xls) atau CSV. 
+                            <a href="{{ asset('templates/kategori_template.xlsx') }}" download>Download template</a>.
+                        </small>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
+                    <button type="submit" class="btn btn-primary">Import</button>
+                </div>
+            </form>
         </div>
     </div>
 </div>
@@ -94,7 +164,14 @@
     </div>
 </div>
 
+
+
+
 <script>
+
+document.getElementById('importButton').addEventListener('click', function () {
+        $('#importModal').modal('show');
+    });
     // Tambah Barang
     document.getElementById('addButton').addEventListener('click', function () {
         resetForm();
@@ -103,6 +180,17 @@
         document.getElementById('itemModalLabel').innerText = 'Tambah Jenis Barang';
         $('#itemModal').modal('show');
     });
+    document.querySelectorAll('.deleteButton').forEach(button => {
+    button.addEventListener('click', function () {
+        const itemId = this.dataset.id;
+        const itemNama = this.dataset.nama;
+
+        document.getElementById('deleteNama').innerText = itemNama;
+        document.getElementById('deleteForm').action = `/admin/kategori/${itemId}`;
+
+        $('#deleteModal').modal('show');
+    });
+});
 
     // Edit Barang
     document.querySelectorAll('.editButton').forEach(button => {
@@ -115,7 +203,7 @@
 
 
             document.getElementById('itemForm').action = `/admin/kategori/${item.id}`;
-            document.getElementById('methodField').value = 'POST';
+            document.getElementById('methodField').value = 'PUT';
             document.getElementById('itemModalLabel').innerText = 'Edit Barang';
             $('#itemModal').modal('show');
         });

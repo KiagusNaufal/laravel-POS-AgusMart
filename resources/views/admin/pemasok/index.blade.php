@@ -30,7 +30,18 @@
             @endif
 
             <div class="card-body">
-                <div class="table-responsive">
+                <button type="button" class="btn btn-warning btn-block mt-2" id="importButton">
+                    Import Pemasok
+                </button>
+                <form method="GET" action="{{ route('admin.pemasok.pdf') }}">
+                    @csrf
+                    <button type="submit" class="btn btn-danger btn-block mt-2">Download PDF</button>
+                </form>
+                <form method="GET" action="{{ route('admin.pemasok.excel') }}">
+                    @csrf
+                    <button type="submit" class="btn btn-success btn-block mt-2">Download Excel</button>
+                </form>
+                <div class="table-responsive p-3">
                     <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                         <thead>
                             <tr>
@@ -102,6 +113,35 @@
     </div>
 </div>
 
+<div class="modal fade" id="importModal" tabindex="-1" role="dialog" aria-labelledby="importModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="importModalLabel">Import Data Kategori Barang</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form id="importForm" method="POST" action="{{ route('admin.pemasok.import') }}" enctype="multipart/form-data">
+                @csrf
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="file">Pilih File Excel</label>
+                        <input type="file" class="form-control-file" id="file" name="file" required accept=".xlsx, .xls, .csv">
+                        <small class="form-text text-muted">
+                            Format file harus Excel (.xlsx, .xls) atau CSV. 
+                            <a href="{{ asset('templates/kategori_template.xlsx') }}" download>Download template</a>.
+                        </small>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
+                    <button type="submit" class="btn btn-primary">Import</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 
 <!-- Modal -->
 <div class="modal fade" id="itemModal" tabindex="-1" role="dialog" aria-labelledby="itemModalLabel" aria-hidden="true">
@@ -144,6 +184,10 @@
 </div>
 
 <script>
+
+document.getElementById('importButton').addEventListener('click', function () {
+        $('#importModal').modal('show');
+    });
     // Tambah Barang
     document.getElementById('addButton').addEventListener('click', function () {
         resetForm();

@@ -39,6 +39,18 @@
             </form>
         </div>
     </div>
+    <div class="card shadow mb-4">
+        <div class="card-body">
+    <form id="barcodeForm">
+                <label for="searchBarang">Cari Barang</label>
+                <div class="input-group">
+                    <input type="text" id="barcodeInput" class="form-control" placeholder="Scan barcode di sini..." autofocus>
+                </div>
+            </form>
+        </div>
+    </div>
+
+
 
     <!-- Form Pencarian Member -->
     <div class="card shadow mb-4">
@@ -168,6 +180,53 @@
             })
             .catch(error => console.error("Error fetching members:", error));
     }
+
+    window.addEventListener('load', () => {
+        document.getElementById('barcodeInput').focus();
+    });
+
+    document.addEventListener('keydown', function (e) {
+        if (e.key === '/' && !e.target.matches('input, textarea')) {
+            e.preventDefault();
+            document.getElementById('barcodeInput').focus();
+        }
+    });
+
+    document.getElementById('barcodeForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    let barcode = document.getElementById('barcodeInput').value.trim();
+    if (!barcode) return;
+
+    fetch('/admin/penjualan/search?query=' + encodeURIComponent(barcode))
+        .then(res => res.json())
+        .then(results => {
+            if (results.length > 0) {
+                let product = results[0]; // Ambil yang pertama cocok
+                let existing = cart.find(p => p.id == product.id);
+                if (existing) {
+                    existing.quantity++;
+                } else {
+                    cart.push({
+                        id: product.id,
+                        nama_barang: product.nama_barang,
+                        harga: product.harga_beli,
+                        gambar: product.gambar_barang,
+                        quantity: 1
+                    });
+                }
+
+                saveCart();
+                renderCart();
+                document.getElementById('barcodeInput').value = '';
+            } else {
+                alert("Produk tidak ditemukan.");
+                document.getElementById('barcodeInput').select();
+            }
+        })
+        .catch(error => {
+            console.error('Error saat mencari produk:', error);
+        });
+    });
 
     function selectMember(id, nama) {
         document.getElementById('selectedMemberId').value = id;

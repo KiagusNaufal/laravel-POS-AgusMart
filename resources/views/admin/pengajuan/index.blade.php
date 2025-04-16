@@ -185,7 +185,7 @@
         const itemNama = this.dataset.nama_pelanggan;
 
         document.getElementById('deleteNama').innerText = itemNama;
-        document.getElementById('deleteForm').action = `/admin/pengajuan/${itemId}`;
+        document.getElementById('deleteForm').action = `/admin/absensi/${itemId}`;
 
         $('#deleteModal').modal('show');
     });

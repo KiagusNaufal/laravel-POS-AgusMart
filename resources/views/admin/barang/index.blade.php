@@ -28,8 +28,19 @@
                 </ul>
             </div>
             @endif
-
-            <div class="table-responsive">
+<div class="card-body">
+            <button type="button" class="btn btn-warning btn-block mt-2" id="importButton">
+                Import Kategori
+            </button>
+            <form method="GET" action="{{ route('admin.barang.pdf') }}">
+                @csrf
+                <button type="submit" class="btn btn-danger btn-block mt-2">Download PDF</button>
+            </form>
+            <form method="GET" action="{{ route('admin.barang.excel') }}">
+                @csrf
+                <button type="submit" class="btn btn-success btn-block mt-2">Download Excel</button>
+            </form>
+            <div class="table-responsive p-3">
                 <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                     <thead>
                         <tr>
@@ -81,6 +92,7 @@
             <div class="d-flex justify-content-center">
                 {{ $barang->links() }}
             </div>
+        </div>
         </div>
     </div>
 </div>
@@ -193,21 +205,27 @@
             document.getElementById('kode_barang').value = item.kode_barang;
             document.getElementById('nama_barang').value = item.nama_barang;
             document.getElementById('kategori').value = item.kategori;
+            document.getElementById('harga_beli').value = item.harga_beli;
             document.getElementById('persentase_keuntungan').value = item.persentase_keuntungan;
             document.getElementById('stok').value = item.stok;
             document.getElementById('ditarik').value = item.ditarik;
 
             // Handle image preview separately
             const previewImageElement = document.getElementById('preview_gambar_barang');
-            previewImageElement.src = "{{ asset('images') }}/" + item.gambar_barang;
-            previewImageElement.style.display = 'block';
+            if (item.gambar_barang) {
+                previewImageElement.src = "{{ asset('images') }}/" + item.gambar_barang;
+                previewImageElement.style.display = 'block';
+            } else {
+                previewImageElement.style.display = 'none';
+            }
 
             document.getElementById('itemForm').action = `/admin/barang/${item.id}`;
-            document.getElementById('methodField').value = 'PUT';
+            document.getElementById('methodField').value = 'POST';
             document.getElementById('itemModalLabel').innerText = 'Edit barang';
             $('#itemModal').modal('show');
         });
     });
+
 
     // Reset Form
     function resetForm() {

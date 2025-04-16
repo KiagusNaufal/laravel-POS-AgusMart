@@ -31,7 +31,7 @@ class BarangFactory extends Factory
         return [
             'kode_barang' => $this->faker->unique()->randomNumber(9),
             'id_kategori' => $data->id,
-            'nama_barang' => $this->faker->name(),
+            'nama_barang' => $this->faker->word(),
             'harga_beli' => $this->faker->randomNumber(6),
             'persentase_keuntungan' => $this->faker->randomNumber(2),
             'gambar_barang' => $images[array_rand($images)],

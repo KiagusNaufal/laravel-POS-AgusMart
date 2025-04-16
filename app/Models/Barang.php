@@ -18,7 +18,6 @@ class Barang extends Model
         'harga_beli',
         'persentase_keuntungan',
         'gambar_barang',
-        'harga_jual',
         'stok',
         'ditarik',
     ];

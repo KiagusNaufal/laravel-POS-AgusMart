@@ -14,13 +14,20 @@ use Illuminate\Support\Facades\DB;
 
 class LaporanController extends Controller
 {
+    /**
+     * Menampilkan laporan barang dengan filter dan pagination.
+     * 
+     * @param Request $request
+     * @return \Illuminate\View\View
+     */
     public function barang(Request $request)
     {
         $startDate = $request->input('start_date');
         $endDate = $request->input('end_date');
         $searchTerm = $request->input('search_term');
-        $perPage = $request->input('per_page', 10);
+        $perPage = $request->input('per_page', 10); // Jumlah data per halaman
     
+        // Query untuk mengambil data barang yang terjual
         $query = DetailPenjualan::select('id_barang', DB::raw('SUM(jumlah) as total_terjual'), DB::raw('SUM(detail_penjualan.harga_jual * jumlah) as total_penjualan'))
             ->join('penjualan', 'detail_penjualan.id_penjualan', '=', 'penjualan.id')
             ->join('barang', 'detail_penjualan.id_barang', '=', 'barang.id')
@@ -37,7 +44,7 @@ class LaporanController extends Controller
             ->with('barang')
             ->get();
     
-        // Mapping data
+        // Mapping data untuk menambahkan perhitungan keuntungan
         $mappedData = $query->map(function ($item) {
             return [
                 'nama_barang' => $item->barang->nama_barang,
@@ -48,10 +55,10 @@ class LaporanController extends Controller
             ];
         });
 
-        // Calculate total profit
+        // Menghitung total keuntungan
         $totalKeuntungan = $mappedData->sum('keuntungan');
     
-        // Manual pagination
+        // Manual pagination menggunakan LengthAwarePaginator
         $currentPage = LengthAwarePaginator::resolveCurrentPage();
         $currentItems = $mappedData->slice(($currentPage - 1) * $perPage, $perPage)->values();
         $paginatedBarang = new LengthAwarePaginator($currentItems, $mappedData->count(), $perPage, $currentPage, [
@@ -59,25 +66,36 @@ class LaporanController extends Controller
             'query' => request()->query(),
         ]);
     
+        // Mengambil data kategori untuk digunakan dalam view
         $kategori = Kategori::all();
     
+        // Mengambil data user yang sedang login
         $user = Auth::user();
         if ($user->role == 'admin') {
+            // Menampilkan laporan barang untuk admin
             return view('admin.laporan.barang', compact('paginatedBarang', 'kategori', 'totalKeuntungan'));
         } elseif ($user->role == 'super') {
+            // Menampilkan laporan barang untuk supervisor
             return view('supervisor.laporan.barang', compact('paginatedBarang', 'kategori', 'totalKeuntungan'));
         } else {
             return redirect('/');
         }
     }
 
+    /**
+     * Menampilkan laporan penjualan dengan filter dan pagination.
+     * 
+     * @param Request $request
+     * @return \Illuminate\View\View
+     */
     public function penjualan(Request $request)
     {
         $noFaktur = $request->input('no_faktur');
         $startDate = $request->input('start_date');
         $endDate = $request->input('end_date');
-        $perPage = $request->input('per_page', 5); // Default 10 data per halaman
+        $perPage = $request->input('per_page', 5); // Default 5 data per halaman
     
+        // Query untuk mengambil data penjualan
         $penjualan = Penjualan::with('user', 'detail_penjualan.barang')
             ->when($noFaktur, function ($query) use ($noFaktur) {
                 return $query->where('no_faktur', 'like', '%' . $noFaktur . '%');
@@ -87,23 +105,33 @@ class LaporanController extends Controller
             })
             ->paginate($perPage);
     
-            $user = Auth::user();
-            if ($user->role == 'admin') {
-                return view('admin.laporan.penjualan', compact('penjualan'));
-            } elseif ($user->role == 'super') {
-                return view('supervisor.laporan.penjualan', compact('penjualan'));
-            } else {
-                return redirect('/');
-            }
+        // Mengambil data user yang sedang login
+        $user = Auth::user();
+        if ($user->role == 'admin') {
+            // Menampilkan laporan penjualan untuk admin
+            return view('admin.laporan.penjualan', compact('penjualan'));
+        } elseif ($user->role == 'super') {
+            // Menampilkan laporan penjualan untuk supervisor
+            return view('supervisor.laporan.penjualan', compact('penjualan'));
+        } else {
+            return redirect('/');
+        }
     }
 
+    /**
+     * Menampilkan laporan pembelian dengan filter dan pagination.
+     * 
+     * @param Request $request
+     * @return \Illuminate\View\View
+     */
     public function pembelian(Request $request)
     {
         $noFaktur = $request->input('no_faktur');
         $startDate = $request->input('start_date');
         $endDate = $request->input('end_date');
-        $perPage = $request->input('per_page', 5); // Default 10 data per halaman
+        $perPage = $request->input('per_page', 5); // Default 5 data per halaman
     
+        // Query untuk mengambil data pembelian
         $pembelian = Pembelian::with('user', 'detail_pembelian.barang')
             ->when($noFaktur, function ($query) use ($noFaktur) {
                 return $query->where('kode_masuk', 'like', '%' . $noFaktur . '%');
@@ -113,14 +141,17 @@ class LaporanController extends Controller
             })
             ->paginate($perPage);
     
-            $user = Auth::user();
-            if ($user->role == 'admin') {
-                return view('admin.laporan.pembelian', compact('pembelian'));
-            } elseif ($user->role == 'super') {
-                return view('supervisor.laporan.pembelian', compact('pembelian'));
-            } else {
-                return redirect('/');
-            }
+        // Mengambil data user yang sedang login
+        $user = Auth::user();
+        if ($user->role == 'admin') {
+            // Menampilkan laporan pembelian untuk admin
+            return view('admin.laporan.pembelian', compact('pembelian'));
+        } elseif ($user->role == 'super') {
+            // Menampilkan laporan pembelian untuk supervisor
+            return view('supervisor.laporan.pembelian', compact('pembelian'));
+        } else {
+            return redirect('/');
+        }
     }
 
 }

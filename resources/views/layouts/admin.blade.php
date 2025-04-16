@@ -1,36 +1,34 @@
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
-<head>
-    <!-- Required meta tags -->
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <meta name="description" content="Laravel SB Admin 2">
-    <meta name="author" content="Alejandro RH">
-
-    <!-- CSRF Token -->
-    <meta name="csrf-token" content="{{ csrf_token() }}">
-
-    <title>{{ config('app.name', 'AgusMart') }}</title>
-<!-- Bootstrap CSS -->
-
-<link href="{{ asset('css/sb-admin-2.min.css') }}" rel="stylesheet">    
+    <head>
+        <!-- Meta Tags -->
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <meta name="description" content="Laravel SB Admin 2">
+        <meta name="author" content="Alejandro RH">
+    
+        <!-- CSRF Token -->
+        <meta name="csrf-token" content="{{ csrf_token() }}">
+    
+        <!-- Title -->
+        <title>{{ config('app.name', 'AgusMart') }}</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<!-- jQuery (Wajib untuk Select2) -->
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<!-- Select2 JS -->
-<script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>
-<!-- Select2 CSS -->
-<link href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" rel="stylesheet">
-
-    <!-- Fonts -->
-    <link href="{{ asset('vendor/fontawesome-free/css/all.min.css') }}" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <!-- Styles -->
-
-    <!-- Favicon -->
-    <link href="{{ asset('img/favicon.png') }}" rel="icon" type="image/png">
-</head>
+    
+        <!-- Fonts & Icons -->
+        <link href="{{ asset('vendor/fontawesome-free/css/all.min.css') }}" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css?family=Nunito:200,300,400,600,700,800,900" rel="stylesheet">
+    
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+        <!-- Stylesheets -->
+        <link href="{{ asset('css/sb-admin-2.min.css') }}" rel="stylesheet">
+        <link href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" rel="stylesheet">
+        <link href="https://cdn.datatables.net/v/bs4/dt-1.11.5/datatables.min.css" rel="stylesheet">
+    
+        <!-- Favicon -->
+        <link href="{{ asset('img/favicon.png') }}" rel="icon" type="image/png">
+    </head>
+    
 <body id="page-top">
 
 <!-- Page Wrapper -->
@@ -107,6 +105,11 @@
             <a class="nav-link" href="{{ route('admin.pengajuan') }}">
                 <i class="fas fa-fw fa-tachometer-alt"></i>
                 <span>{{ __('Pengajuan') }}</span></a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="{{ route('admin.absensi') }}">
+                <i class="fas fa-fw fa-tachometer-alt"></i>
+                <span>{{ __('Absensi') }}</span></a>
         </li>
 
         <li class="nav-item">
@@ -355,10 +358,25 @@
     </div>
 </div>
 
-<!-- Scripts -->
+<!-- Remove redundant jQuery and Bootstrap script -->
+<!-- Only include jQuery once -->
 <script src="{{ asset('vendor/jquery/jquery.min.js') }}"></script>
-<script src="{{ asset('vendor/bootstrap/js/bootstrap.min.js') }}"></script>
+<!-- Only include Bootstrap once -->
+<script src="{{ asset('vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
 <script src="{{ asset('vendor/jquery-easing/jquery.easing.min.js') }}"></script>
 <script src="{{ asset('js/sb-admin-2.min.js') }}"></script>
+
+<!-- If you want to use external libraries (ensure there's no conflict) -->
+<!-- Optional external libraries, if needed -->
+<script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>
+<script src="https://cdn.datatables.net/v/bs4/dt-1.11.5/datatables.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.2.2/js/dataTables.buttons.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.2.2/js/buttons.html5.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.2.2/js/buttons.print.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+
+
 </body>
+
 </html>

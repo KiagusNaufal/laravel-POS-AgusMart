@@ -40,4 +40,8 @@ class User extends Authenticatable
     {
         return $this->hasMany(Penjualan::class, 'user_id', 'id');
     }
+    public function absensiKerja()
+    {
+        return $this->hasMany(AbsensiKerja::class, 'user_id', 'id');
+    }
 }

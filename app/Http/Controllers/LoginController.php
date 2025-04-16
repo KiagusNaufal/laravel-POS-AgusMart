@@ -9,21 +9,37 @@ use Illuminate\Support\Facades\Redis;
 
 class LoginController extends Controller
 {
+    /**
+     * Menampilkan halaman login.
+     * 
+     * @return \Illuminate\View\View
+     */
     public function index()
     {
+        // Menampilkan halaman login
         return view('auth.login');
     }
-    
+
+    /**
+     * Melakukan proses login menggunakan email dan password.
+     * 
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function login(Request $request)
     {
+        // Validasi input dari user (email dan password)
         $request->validate([
             'email' => 'required|email',
             'password' => 'required|string',
         ]);
     
+        // Memeriksa apakah kredensial yang dimasukkan benar
         if (Auth::attempt($request->only('email', 'password'))) {
+            // Jika berhasil login, mengambil data user yang sedang login
             $user = Auth::user();
     
+            // Menentukan arah redirect berdasarkan role user
             switch ($user->role) {
                 case 'admin':
                     return redirect()->route('admin')->with('success', 'Selamat datang, Admin');
@@ -36,32 +52,25 @@ class LoginController extends Controller
             }
         }
     
+        // Jika login gagal, menampilkan pesan error
         return back()->with('error', 'Email atau password salah');
     }
-    
 
+    /**
+     * Melakukan proses logout.
+     * 
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function logout(Request $request)
     {
+        // Melakukan logout dan menghapus sesi pengguna
         Auth::logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
+        // Mengarahkan pengguna kembali ke halaman login
         return redirect()->route('auth');
     }
     
-    public function log_in(Request $request)
-    {   
-        $credentials = $request->validate([
-            'email' => 'required|email',
-            'password' => 'required|string'
-        ]);
-
-        if (Auth::attempt($credentials)) {
-            $request->session()->regenerate();
-            return redirect()->intended('/');
-        }
-        return back()->withErrors([
-            'error' => 'email atau password salah'
-        ]);
-    }
 }

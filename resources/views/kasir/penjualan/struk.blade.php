@@ -11,7 +11,7 @@
             text-align: left;
             background-color: #fff;
             color: #000;
-            width: 280px;
+            width: 58mm; /* Sesuaikan dengan lebar printer */
             margin: auto;
             padding: 10px;
             border: 1px solid #000;
@@ -30,7 +30,7 @@
         }
         .total {
             font-weight: bold;
-            text-align: right;
+            text-align: center;
         }
         .btn-cetak {
             margin-top: 10px;
@@ -41,34 +41,33 @@
             cursor: pointer;
         }
         @media print {
-    @page {
-        size: auto;
-        margin: 0;
-    }
-    body {
-        font-size: 10px; /* Atur ukuran font lebih kecil */
-        zoom: 0.8; /* Perkecil tampilan */
-    }
-    body * {
-        visibility: hidden;
-    }
-    .struk, .struk * {
-        visibility: visible;
-    }
-    .struk {
-        position: absolute;
-        left: 0;
-        top: 0;
-        width: 100%;
-        margin: 0;
-        padding: 0;
-        border: none;
-    }
-    .btn-cetak {
-        display: none;
-    }
-}
-
+            @page {
+                size: 58mm auto; /* Lebar 58mm, panjang otomatis */
+                margin: 0;
+            }
+            body {
+                font-size: 10px; /* Atur ukuran font lebih kecil */
+                zoom: 1; /* Sesuaikan zoom jika diperlukan */
+            }
+            body * {
+                visibility: hidden;
+            }
+            .struk, .struk * {
+                visibility: visible;
+            }
+            .struk {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+                margin: 0;
+                padding: 0;
+                border: none;
+            }
+            .btn-cetak {
+                display: none;
+            }
+        }
     </style>
 </head>
 <body>
@@ -100,9 +99,9 @@
             </tbody>
         </table>
         <hr>
-        <p class="total">Total: Rp {{ number_format($penjualan->total, 0, ',', '.') }}</p>
-        <p class="total">Cash: Rp {{ number_format(request('cash'), 0, ',', '.') }}</p>
-        <p class="total">Kembalian: Rp {{ number_format(request('kembalian'), 0, ',', '.') }}</p>
+        <p class="total" style="text-align: left;">Total: Rp {{ number_format($penjualan->total, 0, ',', '.') }}</p>
+        <p class="total" style="text-align: left;">Cash: Rp {{ number_format(request('cash'), 0, ',', '.') }}</p>
+        <p class="total" style="text-align: left;">Kembalian: Rp {{ number_format(request('kembalian'), 0, ',', '.') }}</p>        
         <hr>
         <p style="text-align: center;">*** Terima Kasih ***</p>
 
@@ -113,10 +112,12 @@
 </html>
 
 <script>
-    function cetakStruk() {
+    async function cetakStruk() {
         window.print();
-        setTimeout(function() {
+        await setTimeout(function() {
             window.location.href = "{{ route('admin.penjualan') }}";
         }, 1000);
+
+        localStorage.removeItem('cart');
     }
 </script>
